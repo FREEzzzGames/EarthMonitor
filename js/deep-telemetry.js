@@ -8,7 +8,7 @@ const FEEDS={
  cables:{title:"SUBSEA CABLE INFRASTRUCTURE",url:"https://www.submarinecablemap.com/",description:"Subsea cable maps are public reference maps, not a universal live cable health API. No cable outage status is fabricated; a licensed or operator feed is required for live status."},
  carbon:{title:"GRID CARBON INTENSITY",url:"https://app.electricitymaps.com/",description:"Electricity Maps offers carbon intensity and generation mix, but API access and geographic coverage depend on provider authorization. Use a server-side proxy for tokens."}
 };
-const state={active:"dsn",controller:null};
+const state={active:"dsn",controller:null,requestId:0};
 function text(id,v){const n=$(id);if(n)n.textContent=v}
 function link(id,v){const n=$(id);if(n)n.href=v}
 function cacheGet(k){try{const x=JSON.parse(localStorage.getItem(PREFIX+k)||"null");return x&&x.savedAt&&x.data!==undefined?x:null}catch{return null}}
@@ -40,13 +40,18 @@ function render(k,data,cached=false,savedAt=Date.now()){
   if(host){host.append(metric("PROVIDER",FEEDS[k].url));host.append(metric("LIVE API","No public unauthenticated endpoint configured"));host.append(metric("DATA STATE","Source link available; live API integration requires provider access"))}
  }
  const age=Date.now()-savedAt;
- text("deep-detail-updated",(cached?(age>MAX_AGE?"STALE CACHE":"CACHED DATA"):"UPDATED")+" · "+time(savedAt));
- status(cached?"[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE":(k==="argo"||k==="dart"||k==="dsn"?"PUBLIC FEED CONNECTED":"PROXY REQUIRED"),cached?"warning":"ok");
- text("deep-summary-status",cached?"[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE":(k==="argo"||k==="dart"||k==="dsn"?"PUBLIC FEED CONNECTED":"PROXY REQUIRED"));
+ text("deep-detail-updated",(cached?(age>MAX_AGE?"STALE CACHE":"CACHED DATA"):"RECEIVED")+" · "+time(savedAt));
+ const liveLabel=cached?(age>MAX_AGE?"STALE CACHE · SOURCE UNAVAILABLE":"CACHED · SOURCE UNAVAILABLE"):"LIVE RESPONSE RECEIVED";
+ status(liveLabel,cached?"warning":"ok");
+ text("deep-summary-status",liveLabel);
 }
 async function getJson(url,signal){const r=await fetch(url,{headers:{Accept:"application/json"},cache:"no-store",signal});if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}
 async function load(k){
- state.controller?.abort();const ctrl=new AbortController();state.controller=ctrl;const timeout=setTimeout(()=>ctrl.abort(),12000);setup(k);status("CONNECTING TO PUBLIC ENDPOINT…","loading");
+ state.controller?.abort();
+ const requestId=++state.requestId;
+ const ctrl=new AbortController();state.controller=ctrl;
+ const timeout=setTimeout(()=>ctrl.abort(),12000);
+ setup(k);status("CONNECTING TO PUBLIC ENDPOINT…","loading");
  try{
   const config=window.EARTHMONITOR_DEEP_CONFIG?.[k];let url=config?.url,data;
   if(!url&&k==="orbit")url="https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=JSON";
@@ -54,14 +59,21 @@ async function load(k){
   if(!url&&k==="dart")url="https://www.ndbc.noaa.gov/data/realtime2/21415.dart";
   if(!url)throw new Error("Live API endpoint requires a provider-specific server proxy");
   if(k==="dart"&&!config?.url){
-   const r=await fetch(url,{cache:"no-store",signal:ctrl.signal});if(!r.ok)throw new Error("HTTP "+r.status);const raw=await r.text();const lines=raw.trim().split(/\r?\n/);data=lines.slice(0,16).map(line=>line.trim().split(/\s+/));if(lines.length<2)throw new Error("No DART observations");
+   const r=await fetch(url,{cache:"no-store",signal:ctrl.signal});if(!r.ok)throw new Error("HTTP "+r.status);
+   const raw=await r.text(),lines=raw.trim().split(/\r?\n/).filter(line=>line.trim()&&!line.trim().startsWith("#"));
+   if(!lines.length)throw new Error("No DART observations");
+   data={headers:raw.split(/\r?\n/).find(line=>line.trim().startsWith("#"))||"",rows:lines.slice(-15).map(line=>line.trim().split(/\s+/))};
   }else data=await getJson(url,ctrl.signal);
-  if(!data||(typeof data!=="object"&& !Array.isArray(data)))throw new Error("Unexpected provider response");
+  if(!data||(typeof data!=="object"&&!Array.isArray(data)))throw new Error("Unexpected provider response");
+  if(k==="orbit"&&!Array.isArray(data)&&!Array.isArray(data.data))throw new Error("CelesTrak response is not a catalog array");
+  if(k==="argo"&&!Array.isArray(data?.table?.rows))throw new Error("ERDDAP response has no table rows");
+  if(requestId!==state.requestId)return;
   cacheSet(k,data);render(k,data,false,Date.now());
  }catch(e){
+  if(requestId!==state.requestId)return;
   const cached=cacheGet(k);
   if(cached)render(k,cached.data,true,cached.savedAt);
-  else{status("LIVE SOURCE UNAVAILABLE","warning");text("deep-summary-status","LIVE SOURCE UNAVAILABLE");text("deep-detail-updated","NO CACHED RESPONSE · "+(e?.message||"source unavailable"));const host=$("deep-detail-data");host?.replaceChildren();host?.append(metric("DATA STATE","Unavailable"),metric("SOURCE",FEEDS[k].url),metric("REASON",(e?.message||"feed unavailable").slice(0,150)))}
+  else{status("LIVE SOURCE UNAVAILABLE","warning");text("deep-summary-status","LIVE SOURCE UNAVAILABLE");text("deep-detail-updated","NO CACHED RESPONSE · "+(e?.name==="AbortError"?"request timed out":e?.message||"source unavailable"));const host=$("deep-detail-data");host?.replaceChildren();host?.append(metric("DATA STATE","Unavailable"),metric("SOURCE",FEEDS[k].url),metric("REASON",(e?.message||"source unavailable").slice(0,150)))}
  }finally{clearTimeout(timeout)}
 }
 function open(){const d=$("deep-telemetry-dialog");if(d&&!d.open)d.showModal();load(state.active)}
