@@ -729,3 +729,7 @@ button,a,input,.panel,.strategic-dialog{border-radius:0!important}
 .deep-demo-notice{margin-bottom:8px;border-color:#9a7c38!important;color:#f3d48c!important}
 @media(max-width:1050px){.masthead{align-items:flex-start}.subbrand{margin-left:auto}.actions{flex:1 1 100%;justify-content:flex-start}}
 @media(max-width:620px){.subbrand{max-width:none}.actions{flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin}.actions>*{flex:0 0 auto}.strategic-dialog-actions,.deep-demo-toolbar{align-items:stretch;flex-direction:column}.strategic-dialog-actions button,.deep-demo-toolbar button{width:100%}}
+
+
+/* Honest live-camera failure state: never replace a failed source with generated footage. */
+.camera-offline-state{display:flex;align-items:center;justify-content:center;min-height:100%;width:100%;padding:1rem;background:#08090b;color:#aeb6bf;border:1px solid #343a40;text-align:center;font:600 .72rem/1.5 "Space Mono",monospace;letter-spacing:.08em;text-transform:uppercase;}
