@@ -42,7 +42,26 @@ function updateStatus(){const online=navigator.onLine;const status=$("net-status
 async function refreshAll(){const btn=$("refresh");btn.disabled=true;btn.textContent="↻ FETCHING";state.errors=[];state.cacheUsed=false;set("net-status","● FETCHING PUBLIC DATA");set("data-status","REQUESTING PUBLIC APIS");const tasks=await Promise.allSettled([loadWeather(),loadISS(),loadEarthData()]);for(const t of tasks)if(t.status==="rejected")state.errors.push(String(t.reason));state.updated=new Date().toISOString();updateStatus();btn.disabled=false;btn.textContent="↻ REFRESH";state.requests++;}
 const names={earth:"EARTH / LIVE STATUS",stars:"DEEP SPACE / STAR FIELD",weather:"WEATHER / ATMOSPHERE",orbit:"ORBIT / ISS TELEMETRY",video:"NASA / ISS LIVE VIDEO",earthdata:"GLOBAL EARTH MONITOR",spaceweather:"SPACE WEATHER & SOLAR FLUX",wildfires:"GLOBAL WILDFIRES & THERMAL ANOMALIES",airquality:"AIR QUALITY & ATMOSPHERE",moon:"MOON / CELESTIAL CYCLE",satellites:"SATELLITE NETWORK"};
 function panelDetails(id){const p=byPanel(id);if(!p)return "";const lines=[names[id]||id,"",...Array.from(p.querySelectorAll(".row,.metric,.small,.kicker,.footer")).map(el=>el.innerText.trim()).filter(Boolean)];if(id==="earthdata")lines.push("Source: USGS M2.5+ daily GeoJSON, NASA EONET public events, NOAA SWPC planetary K-index.");if(id==="spaceweather")lines.push("Sources: NOAA SWPC planetary K-index, solar-wind plasma and GOES X-ray flux. Kp < 4 QUIET, 4–<5 UNSETTLED, >=5 STORM.");if(id==="wildfires")lines.push("Source: NASA EONET open wildfire event catalog. EONET does not supply VIIRS/MODIS brightness temperature; NASA FIRMS satellite thermal anomaly data requires an API key.");if(id==="airquality")lines.push("Source: Open-Meteo Air Quality API model estimates for Pforzheim, Germany; not a regulatory ground monitor.");if(id==="weather")lines.push("Source: Open-Meteo forecast and air-quality APIs; location is Pforzheim, Germany. Model values are not ground-station measurements.");if(id==="orbit")lines.push("Source: WhereTheISS.at public ISS position endpoint. Position is a live sample and can be temporarily unavailable.");if(id==="stars")lines.push("Star field and connecting lines are a generated visual, not a validated astronomical catalog.");if(id==="moon")lines.push("Lunar phase and orbital distances are approximate calculations from time-based formulas.");if(id==="satellites")lines.push("Source: CelesTrak public GP catalog for the STATIONS group. The count represents objects returned by that specific group, not all satellites in orbit.");if(id==="video")lines.push("Live playback falls back to a direct NASA archive video or a local animated ambient scene. Archive/ambient modes are marked as not live.");return lines.join("\n");}
-function openDetails(id){const dialog=$("details");$("dialog-title").textContent=names[id]||"PANEL DETAILS";$("dialog-body").textContent=panelDetails(id);dialog.dataset.panel=id;if(!dialog.open)dialog.showModal();}
+function openDetails(id){
+ const dialog=$("details"), source=byPanel(id), body=$("dialog-body");
+ $("dialog-title").textContent=names[id]||source?.querySelector("h2")?.textContent||"PANEL DETAILS";
+ body.replaceChildren();
+ const intro=document.createElement("p");intro.className="muted";intro.textContent=panelDetails(id);body.append(intro);
+ if(source){
+  const content=document.createElement("div");content.className="drill-panel-content";
+  [...source.children].filter(el=>!el.classList.contains("panel-head")).forEach((el,index)=>{
+   const card=document.createElement("section");card.className="drill-card";
+   const title=document.createElement("h3");title.textContent=el.querySelector("h2")?.textContent||el.querySelector(".kicker")?.textContent||((index+1).toString().padStart(2,"0")+" / TELEMETRY");
+   card.append(title);
+   const clone=el.cloneNode(true);
+   clone.querySelectorAll("[id]").forEach(node=>node.removeAttribute("id"));
+   clone.querySelectorAll("button").forEach(button=>button.disabled=true);
+   card.append(clone);content.append(card);
+  });
+  body.append(content);
+ }
+ dialog.dataset.panel=id;if(!dialog.open)dialog.showModal();
+}
 document.querySelectorAll("[data-monitor-tab]").forEach(button=>button.addEventListener("click",()=>{const mode=button.dataset.monitorTab;document.querySelectorAll("[data-monitor-tab]").forEach(tab=>{const active=tab===button;tab.classList.toggle("is-active",active);tab.setAttribute("aria-selected",String(active));});document.querySelectorAll("[data-monitor-view]").forEach(view=>{const active=view.dataset.monitorView===mode;view.classList.toggle("is-active",active);view.hidden=!active;});const titles={earthdata:"GLOBAL EARTH MONITOR",spaceweather:"SPACE WEATHER & SOLAR FLUX",wildfires:"GLOBAL WILDFIRES & THERMAL ANOMALIES",airquality:"AIR QUALITY & ATMOSPHERE"};set("earthdata-title",titles[mode]||"GLOBAL EARTH MONITOR");}));
 
 const glossary={
@@ -166,3 +185,13 @@ document.addEventListener("visibilitychange",()=>{if(!document.hidden)astronomy(
 window.addEventListener("online",()=>{set("net-status","● ONLINE · RETRYING");refreshAll()});window.addEventListener("offline",updateStatus);
 astronomy();drawStars();resolveNASAClip("earth rotation", $("earth-ambient-video"), document.querySelector(".earth-video-visual"), "earth-video-label");resolveNASAClip("starfield", $("space-ambient-video"), document.querySelector(".space-video-visual"), "sky-label");refreshAll();setInterval(astronomy,1000);setInterval(refreshAll,300000);
 })();
+
+/* All panel headings are drill-down targets; the expand control remains available. */
+document.querySelectorAll(".panel-head h2").forEach(heading=>{
+ heading.tabIndex=0;
+ heading.setAttribute("role","button");
+ heading.setAttribute("aria-label","Open details: "+heading.textContent.trim());
+ const open=()=>{const panel=heading.closest("[data-panel]");if(panel)openDetails(panel.dataset.panel);};
+ heading.addEventListener("click",open);
+ heading.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();open();}});
+});
