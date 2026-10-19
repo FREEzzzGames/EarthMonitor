@@ -1,33 +1,41 @@
-# EarthMonitor Android
+# EarthMonitor Android — Capacitor
+
+The dashboard runs inside Capacitor's native Android bridge and is bundled locally into the APK. It does not depend on GitHub Pages to load the interface. External feeds, videos and live camera URLs still need connectivity.
+
+## Build
+
+```bash
+npm install
+npm test
+npm run build
+npx cap sync android
+gradle -p android assembleDebug --no-daemon
+```
+
+Open the native project using `npx cap open android`.
 
 ## App icon
-- Source mission-patch SVG: `../assets/earth-monitor-logo.svg`
-- Android adaptive icon: `app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml`
+
+- SVG mission-patch source: `../assets/earth-monitor-logo.svg`
+- Adaptive icon: `app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml`
 - Foreground vector: `app/src/main/res/drawable/ic_launcher_foreground.xml`
-- Background: pure black.
+- Black background: `app/src/main/res/drawable/ic_launcher_background.xml`
 
 ## Native 4×2 home-screen widget
-The project uses the Android App Widgets API directly. Capacitor is not part of the current app shell (it is a native Android WebView host), and a Capacitor web plugin alone cannot install a launcher widget. A native provider is therefore the appropriate implementation.
 
-Files:
-- `app/src/main/res/layout/widget_earth_monitor.xml` — RemoteViews-compatible layout
-- `app/src/main/res/xml/earth_monitor_widget_info.xml` — resizable 4×2 widget metadata
-- `app/src/main/java/com/freezzz/earthmonitor/EarthMonitorWidgetProvider.java` — public-feed refresh and click actions
-- `app/src/main/res/drawable/widget_card.xml` — translucent black card and neutral border
+The home-screen widget uses Android App Widgets API. Capacitor itself does not provide launcher widgets, so the native `EarthMonitorWidgetProvider` is retained and works independently of the WebView.
 
-### Install / use
-1. Build and install the Android app.
-2. Long-press the Android launcher, choose **Widgets**, find **EarthMonitor Control Deck**, and place it on the home screen.
-3. Resize it to approximately 4 columns × 2 rows. Launcher cell dimensions vary by device.
-4. Tap ↻ to refresh or **OPEN DECK** to launch the dashboard.
+- Layout: `app/src/main/res/layout/widget_earth_monitor.xml`
+- Provider metadata: `app/src/main/res/xml/earth_monitor_widget_info.xml`
+- Provider/data fetch: `app/src/main/java/com/freezzz/earthmonitor/EarthMonitorWidgetProvider.java`
 
-### Data sources
-- ISS position/altitude: WhereTheISS.at public API.
-- Local weather/wind: Open-Meteo, fixed to Pforzheim (48.8922, 8.6946), wind in km/h.
-- Planetary Kp index: NOAA SWPC public JSON.
-- M2.5+ earthquakes in the last day: USGS GeoJSON feed.
+Install the app, long-press the launcher, open **Widgets**, add **EarthMonitor Control Deck**, and resize it. Tap ↻ to refresh; tap **OPEN DECK** to open the dashboard.
 
-The widget requests fresh data when it is added and when refresh is tapped. Android's periodic AppWidget update interval has a platform minimum of 30 minutes; background execution and network availability are controlled by Android. Each feed is independent, so a failed source leaves that field at its fallback value. No API keys are embedded.
+## Data sources
 
-### Capacitor note
-Capacitor has no built-in API that creates launcher widgets. If the web application is later wrapped in Capacitor, keep this native AppWidgetProvider and expose app/widget interactions through a small native plugin only if the web UI needs to trigger them. Widget refresh should remain native and must not depend on the WebView being open.
+- ISS: WhereTheISS.at
+- Weather/wind for Pforzheim: Open-Meteo
+- Kp index: NOAA SWPC
+- M2.5+ earthquakes in the last day: USGS
+
+The widget fetches data when added and on manual refresh. Android's periodic widget update interval has a minimum of 30 minutes; network availability and background execution are controlled by Android. No API keys are embedded.
