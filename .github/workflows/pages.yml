@@ -1,0 +1,47 @@
+name: EarthMonitor Web
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: earthmonitor-pages
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/earth-monitor-smoke.mjs
+      - name: Validate standalone HTML and JavaScript
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          import vm from 'node:vm';
+          const html = readFileSync('index.html', 'utf8');
+          const scripts = [...html.matchAll(/<script(?:\\s[^>]*)?>([\\s\\S]*?)<\\/script>/gi)].map(m => m[1]);
+          if (scripts.length !== 1) throw new Error('Expected one inline dashboard runtime');
+          new vm.Script(scripts[0], { filename: 'earth-monitor.js' });
+          console.log('Inline dashboard JavaScript parses successfully.');
+          NODE
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
