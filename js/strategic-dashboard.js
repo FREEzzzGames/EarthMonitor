@@ -54,13 +54,46 @@ async function loadTransport(host){
  }
 }
 
+async function loadTransportFeed(){
+ const content=$("strategic-dialog-content");content.replaceChildren();
+ const heading=document.createElement("h3");heading.textContent="VPE · PFORZHEIM / LIVE GTFS-REALTIME";content.append(heading);
+ const status=document.createElement("p");status.className="strategic-source-note";status.textContent="Fetching public VPE service alerts and trip updates…";content.append(status);
+ const feeds=[
+  {name:"SERVICE ALERTS",url:"https://opendata.vpe.de/data/gtfs/realtime/service-alerts.pbf?debug=",kind:"alerts"},
+  {name:"TRIP UPDATES",url:"https://opendata.vpe.de/data/gtfs/realtime/trip-updates.pbf?debug=",kind:"trips"}
+ ];
+ const stamp=document.createElement("p");stamp.className="strategic-source-note";content.append(stamp);
+ const results=await Promise.all(feeds.map(async feed=>{const r=await fetch(feed.url,{headers:{Accept:"application/json"},cache:"no-store"});if(!r.ok)throw new Error(feed.name+" HTTP "+r.status);const data=await r.json();if(!Array.isArray(data.entity))throw new Error(feed.name+" response has no entity list");return {...feed,data}}).map(p=>p.catch(error=>({error:String(error)}))));
+ let failures=0,totalAlerts=0,totalTrips=0;
+ for(let i=0;i<results.length;i++){
+  const result=results[i],feed=feeds[i],section=document.createElement("section");section.className="strategic-drill-card";
+  const title=document.createElement("h3");title.textContent=feed.name;section.append(title);
+  if(result.error){failures++;const err=document.createElement("p");err.textContent="Source unavailable: "+result.error;section.append(err);content.append(section);continue}
+  const headerTime=Number(result.data.header?.timestamp)*1000;
+  const meta=document.createElement("p");meta.className="strategic-source-note";meta.textContent="Feed timestamp: "+(Number.isFinite(headerTime)&&headerTime>0?new Date(headerTime).toISOString():"not supplied")+" · Records: "+result.data.entity.length;section.append(meta);
+  if(feed.kind==="alerts"){
+   const active=result.data.entity.filter(e=>e.alert).map(e=>e.alert).filter(a=>{const now=Date.now()/1000;return !a.active_period?.length||a.active_period.some(p=>(!p.start||Number(p.start)<=now)&&(!p.end||Number(p.end)>=now))});
+   totalAlerts=active.length;
+   for(const alert of active.slice(0,30)){const card=document.createElement("article");card.className="strategic-drill-card";const h=document.createElement("strong");h.textContent=alert.header_text?.translation?.map(t=>t.text).filter(Boolean).join(" / ")||"Service alert";card.append(h);const desc=document.createElement("p");desc.textContent=alert.description_text?.translation?.map(t=>t.text).filter(Boolean).join("\n")||"No description supplied";card.append(desc);const meta2=document.createElement("p");meta2.className="strategic-source-note";meta2.textContent="Effect: "+(alert.effect||"unknown")+" · Cause: "+(alert.cause||"unknown")+" · Severity: "+(alert.severity_level||"unknown");card.append(meta2);section.append(card)}
+   if(!active.length){const p=document.createElement("p");p.textContent="No active service alerts returned by VPE.";section.append(p)}
+  }else{
+   const trips=result.data.entity.filter(e=>e.trip_update);totalTrips=trips.length;
+   for(const entity of trips.slice(0,30)){const update=entity.trip_update,card=document.createElement("article");card.className="strategic-drill-card";const h=document.createElement("strong");h.textContent=[update.trip?.route_id,update.trip?.trip_id].filter(Boolean).join(" · ")||"Trip update";card.append(h);const stops=document.createElement("p");const calls=(update.stop_time_update||[]).slice(0,8).map(x=>[x.stop_id,x.arrival?.delay!=null?"arrival delay "+x.arrival.delay+"s":null,x.departure?.delay!=null?"departure delay "+x.departure.delay+"s":null].filter(Boolean).join(" — "));stops.textContent=calls.length?calls.join("\n"):"No stop-level updates supplied";card.append(stops);section.append(card)}
+   if(!trips.length){const p=document.createElement("p");p.textContent="No trip updates returned by VPE.";section.append(p)}
+  }
+  content.append(section);
+ }
+ status.textContent=failures===0?"LIVE VPE DATA · "+totalAlerts+" active service alerts · "+totalTrips+" trip updates":"PARTIAL FEED FAILURE · "+failures+" of "+feeds.length+" sources unavailable";
+ stamp.textContent="Retrieved: "+new Date().toISOString()+" · Source: VPE OpenData";
+}
+
 function openModule(id){
  const strategic=$("strategic-dialog");
  const openDedicated=(dialogId,selector)=>{strategic?.close();const d=$(dialogId);if(d&&!d.open)d.showModal();if(selector)document.querySelector(selector)?.click()};
  if(id==="global-streams"){openDedicated("global-stream-dialog",'[data-global-select="lightning"]');return}
  if(id==="niche-telemetry"){openDedicated("niche-telemetry-dialog",'[data-niche-select="aircraft"]');return}
  if(id==="deep-telemetry"){openDedicated("deep-telemetry-dialog",'[data-deep-select="dsn"]');return}
- if(id==="transport"){const p=$("strategic-dialog-content");p.replaceChildren();const note=document.createElement("p");note.className="strategic-source-note";note.textContent="Loading public transport departures for Pforzheim…";p.append(note);loadTransport(p);return}
+ if(id==="transport"){loadTransportFeed();return}
  const panelId=id==="airquality"?"earthdata":id;
  const panel=document.querySelector('#source-library [data-panel="'+panelId+'"]');
  if(!panel){const p=document.createElement("p");p.className="strategic-source-note";p.textContent="MODULE UNAVAILABLE · no matching panel is registered in this build."; $("strategic-dialog-content").replaceChildren(p);return}
