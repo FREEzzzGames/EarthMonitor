@@ -73,3 +73,27 @@ Serve the root directory with any static HTTP server, then open the local URL in
 - Android workflow: https://github.com/FREEzzzGames/EarthMonitor/actions/workflows/android-apk.yml
 
 Inspect the latest run on the `main` branch before treating a deployment or APK as verified. A queued/in-progress build is not a successful build.
+
+
+## 8. Global Streams selector
+
+The global streams UI is implemented in `index.html`, `styles.css`, and `js/global-streams.js`. The selector exposes five distinct source classes without inventing measurements:
+
+- **Lightning:** links to LightningMaps/Blitzortung as an external live map. The project does not assume a stable unauthenticated global strike API or display a fabricated strike count.
+- **Cyber:** attempts to read URLhaus recent threat-intelligence records. These are submitted malicious URL records, not a DDoS rate or a global attack counter.
+- **Aurora / space weather:** reads the NOAA SWPC OVATION aurora grid and solar-wind plasma feed. The grid is a probability forecast, not a visibility guarantee.
+- **Maritime AIS:** requires a licensed AIS provider or authorized same-origin proxy. No vessel positions are synthesized.
+- **EU energy:** requires an ENTSO-E token and server-side query proxy. Tokens must never be placed in static JavaScript or browser storage.
+
+For AIS and energy, configure an authorized same-origin endpoint before the UI is expected to show telemetry:
+
+```js
+// Set in a deployment-owned bootstrap script served before js/global-streams.js.
+// Both URLs must be same-origin endpoints. The backend stores provider credentials.
+window.EARTHMONITOR_GLOBAL_STREAM_CONFIG = {
+  marine: { url: "/api/global-streams/marine" },
+  energy: { url: "/api/global-streams/energy" }
+};
+```
+
+The expected proxy response is JSON. The browser stores only the last successfully fetched payload in localStorage and labels fallback data as cached/stale. A cache is not a substitute for an authenticated provider integration. External LightningMaps visualization remains an outbound link, not an in-app strike telemetry API.
