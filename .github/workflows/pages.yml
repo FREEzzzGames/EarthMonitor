@@ -19,15 +19,16 @@ jobs:
         with:
           node-version: 22
       - run: node scripts/earth-monitor-smoke.mjs
-      - name: Validate standalone HTML and JavaScript
+      - name: Validate inline dashboard JavaScript
         run: |
           node --input-type=module <<'NODE'
           import { readFileSync } from 'node:fs';
           import vm from 'node:vm';
           const html = readFileSync('index.html', 'utf8');
-          const scripts = [...html.matchAll(/<script(?:\\s[^>]*)?>([\\s\\S]*?)<\\/script>/gi)].map(m => m[1]);
-          if (scripts.length !== 1) throw new Error('Expected one inline dashboard runtime');
-          new vm.Script(scripts[0], { filename: 'earth-monitor.js' });
+          const start = html.indexOf('<script>');
+          const end = html.indexOf('</script>', start);
+          if (start < 0 || end < 0) throw new Error('Inline dashboard script not found');
+          new vm.Script(html.slice(start + 8, end), { filename: 'earth-monitor.js' });
           console.log('Inline dashboard JavaScript parses successfully.');
           NODE
   deploy:
@@ -39,9 +40,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      - name: Stage website
+        run: |
+          mkdir -p _site
+          cp index.html .nojekyll _site/
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
