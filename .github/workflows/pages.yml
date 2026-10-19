@@ -47,6 +47,7 @@ jobs:
           mkdir -p _site
           cp index.html styles.css app.js .nojekyll _site/
           cp -R js _site/js
+          test -f _site/js/touch-tactical.js
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
