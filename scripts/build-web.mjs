@@ -1,6 +1,5 @@
 import { mkdir, cp, copyFile } from 'node:fs/promises';
 
-const root = new URL('../', import.meta.url);
 const out = new URL('../www/', import.meta.url);
 await mkdir(out, { recursive: true });
 await Promise.all([
