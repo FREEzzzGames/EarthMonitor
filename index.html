@@ -15,6 +15,7 @@
 <div class="status" id="net-status"><span class="dot"></span>INITIALIZING</div>
 <div class="actions"><nav class="language-switch" aria-label="Interface language"><button type="button" data-language="en" aria-pressed="true">EN</button><button type="button" data-language="ru" aria-pressed="false">RU</button><button type="button" data-language="uk" aria-pressed="false">UK</button><button type="button" data-language="de" aria-pressed="false">DE</button></nav><button id="refresh" type="button" title="Refresh public data">↻ REFRESH</button><button id="help-open" type="button" title="Operator help">[?] HELP</button><button id="font-down" type="button" aria-label="Decrease text size">A−</button><button id="font-up" type="button" aria-label="Increase text size">A+</button><button id="landscape" type="button" title="Request landscape orientation">↔ LANDSCAPE</button></div>
 </header>
+<div class="critical-ticker" role="status" aria-live="polite"><span class="ticker-tag">CRITICAL WATCH</span><span id="critical-ticker-text">CONNECTING TO PUBLIC ALERT SOURCES…</span><span id="critical-ticker-time">UTC --:--</span></div>
 <main class="grid" id="monitor-grid">
 <section class="panel panel-globe" data-panel="earth">
 <div class="panel-head"><span class="index">01</span><h2>EARTH / LIVE STATUS</h2><button class="expand" data-expand="earth" aria-label="Expand Earth panel">↗</button></div>
@@ -72,6 +73,14 @@
   </div>
 </section>
 
+<section class="panel panel-anomalies" data-panel="anomalies" data-panel-number="13">
+<div class="panel-head"><span class="index">13</span><h2>GLOBAL ANOMALY TERMINAL</h2><button class="expand" data-expand="anomalies" aria-label="Expand anomaly terminal">↗</button></div>
+<nav class="anomaly-tabs" role="tablist" aria-label="Anomaly modules">
+<button type="button" class="is-active" role="tab" aria-selected="true" data-anomaly-tab="space">SPACE</button><button type="button" role="tab" aria-selected="false" data-anomaly-tab="lightning">LIGHTNING</button><button type="button" role="tab" aria-selected="false" data-anomaly-tab="volcano">VOLCANO</button><button type="button" role="tab" aria-selected="false" data-anomaly-tab="cyber">CYBER NET</button><button type="button" role="tab" aria-selected="false" data-anomaly-tab="hydro">HYDRO</button>
+</nav>
+<div class="anomaly-content" id="anomaly-content" aria-live="polite"><div class="anomaly-state"><strong>SPACE WEATHER / NOAA SWPC</strong><span id="anomaly-space-kp">KP —</span><p id="anomaly-space-note">Connecting to official space-weather feed…</p><a href="https://www.swpc.noaa.gov/" target="_blank" rel="noopener noreferrer">OFFICIAL SOURCE ↗</a></div></div>
+<div class="footer"><span id="anomaly-updated">PUBLIC SOURCES · WAITING</span><button type="button" id="anomaly-refresh">REFRESH ↻</button></div>
+</section>
 <section class="panel panel-cameras" data-panel="cameras" data-panel-number="12">
   <div class="panel-head"><span class="index">12</span><h2>REGIONAL CAMERAS / 300 KM RADIUS</h2><button id="rotate-cams" type="button" title="Rotate active cameras">↻ ROTATE CAMS</button></div>
   <div class="camera-grid" id="camera-grid" aria-live="polite"></div>
