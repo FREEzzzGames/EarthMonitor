@@ -63,6 +63,15 @@
 </section>
 
 
+<section class="panel panel-radar" data-panel="radar" data-panel-number="09" aria-label="Airspace radar">
+  <div class="panel-head"><span class="index">09</span><h2>AIRSPACE RADAR / PFORZHEIM</h2><button class="expand" data-expand="radar" aria-label="Open airspace radar">↗</button></div>
+  <div class="radar-compact">
+    <canvas id="air-radar-canvas" aria-label="Air traffic radar plot"></canvas>
+    <div class="radar-readout"><div><span class="kicker">AIRCRAFT IN REGION</span><strong id="air-count" class="big mono">—</strong></div><div><span class="kicker">NEAREST AIRCRAFT</span><strong id="air-nearest" class="medium mono">SCANNING</strong><span id="air-nearest-meta" class="small">WAITING FOR PUBLIC FEED</span></div></div>
+    <div class="radar-status"><span id="air-source-status">INITIALIZING RADAR</span><span id="air-updated">—</span></div>
+  </div>
+</section>
+
 <section class="panel panel-cameras" data-panel="cameras" data-panel-number="12">
   <div class="panel-head"><span class="index">12</span><h2>REGIONAL CAMERAS / 300 KM RADIUS</h2><button id="rotate-cams" type="button" title="Rotate active cameras">↻ ROTATE CAMS</button></div>
   <div class="camera-grid" id="camera-grid" aria-live="polite"></div>
