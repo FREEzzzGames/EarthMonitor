@@ -114,20 +114,20 @@
 }
 
 /* 06 panel tab-switches among original Earth data and widgets 09–11. */
-.panel-earthdata .monitor-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;padding:4px 5px;border-bottom:1px solid #303030;flex:0 0 auto}
+.deck .panel-earthdata .monitor-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;padding:4px 5px;border-bottom:1px solid #303030;flex:0 0 auto}
 .monitor-tab{min-width:0;padding:4px 2px!important;background:#080808!important;border:1px solid #333!important;color:#737373!important;font:8px/1.1 "SFMono-Regular",Consolas,monospace!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .monitor-tab.is-active{color:#fff!important;border-color:#aaa!important;background:#171717!important}
 .panel-earthdata .monitor-view{display:flex;flex:1 1 0;flex-direction:column;min-height:0;overflow:hidden}
 .panel-earthdata .monitor-view[hidden]{display:none!important}
 .panel-earthdata .monitor-view .panel-body{flex:1 1 0;min-height:0}
-.panel-earthdata .monitor-view .footer{flex:0 0 auto;margin-top:auto}
+.deck .panel-earthdata .monitor-view .footer{flex:0 0 auto;margin-top:auto}
 .solar-bar{height:7px;border:1px solid #444;background:linear-gradient(90deg,#333 0 33.333%,#777 33.333% 66.666%,#ddd 66.666% 100%);margin:7px 0;position:relative;flex:0 0 auto}
 .solar-bar i{position:absolute;left:0;top:-3px;width:2px;height:11px;background:#fff;box-shadow:0 0 0 1px #000;transform:translateX(-1px)}
 .fire-list{display:grid;gap:5px;min-height:0;overflow:hidden}
 .fire-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;align-items:start;border-bottom:1px solid #292929;padding-bottom:4px;font:9px/1.25 "SFMono-Regular",Consolas,monospace}
 .fire-row span{min-width:0;overflow-wrap:anywhere;color:#aaa}.fire-row strong{max-width:100%;font:9px/1.2 "SFMono-Regular",Consolas,monospace;color:#fff;text-align:right;white-space:nowrap}
 .monitor-updated{margin-top:auto;padding-top:4px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:8px}
-@media(orientation:landscape) and (max-height:760px){.panel-earthdata .monitor-tabs{padding:3px 4px;gap:2px}.monitor-tab{font-size:7px!important;padding:3px 1px!important}.panel-earthdata .monitor-view .panel-body{padding:3px 5px}.panel-earthdata .monitor-view .footer{padding:3px 4px;font-size:7px}.solar-bar{margin:5px 0}.fire-list{gap:3px}.fire-row{font-size:8px;padding-bottom:3px}.fire-row strong{font-size:8px}}
+@media(orientation:landscape) and (max-height:760px){.deck .panel-earthdata .monitor-tabs{padding:3px 4px;gap:2px}.monitor-tab{font-size:7px!important;padding:3px 1px!important}.panel-earthdata .monitor-view .panel-body{padding:3px 5px}.deck .panel-earthdata .monitor-view .footer{padding:3px 4px;font-size:7px}.solar-bar{margin:5px 0}.fire-list{gap:3px}.fire-row{font-size:8px;padding-bottom:3px}.fire-row strong{font-size:8px}}
 
 
 /* Landscape overflow repair: keep footers in their own row and make dense telemetry readable. */
@@ -176,7 +176,7 @@
 .panel-earthdata .monitor-view .panel-body{padding-bottom:8px!important}
 .panel-earthdata .row strong{max-width:64%;white-space:normal;overflow-wrap:anywhere;word-break:normal}
 .panel-earthdata #earthdata-time{white-space:normal!important;overflow-wrap:anywhere;max-width:100%}
-.panel-earthdata .monitor-view .panel-body{display:flex;flex-direction:column;justify-content:space-between;gap:4px;padding-bottom:16px!important}.panel-earthdata .monitor-view .panel-body>.line:last-of-type{margin-top:auto}.panel-earthdata .monitor-view .footer{position:relative;z-index:3;background:#080808;flex:0 0 auto;margin-top:0;padding-top:6px}
+.panel-earthdata .monitor-view .panel-body{display:flex;flex-direction:column;justify-content:space-between;gap:4px;padding-bottom:16px!important}.deck .panel-earthdata .monitor-view .panel-body>.line:last-of-type{margin-top:auto}.deck .panel-earthdata .monitor-view .footer{position:relative;z-index:3;background:#080808;flex:0 0 auto;margin-top:0;padding-top:6px}
 
 
 /* Last-mile telemetry spacing: keep footer outside the scrollable measurement body. */
@@ -184,7 +184,7 @@
 .panel-orbit .rows{padding-bottom:7px!important}
 .panel-earthdata .monitor-view .panel-body{min-height:0;overflow-y:auto!important;padding-bottom:14px!important;scrollbar-width:thin}
 .panel-earthdata #solar-state,.panel-earthdata #earthdata-time{max-width:100%;overflow-wrap:anywhere;white-space:normal!important}
-.panel-earthdata .monitor-view .footer,.panel-orbit .footer{flex-shrink:0!important;position:relative!important;background:#090909;z-index:4}
+.deck .panel-earthdata .monitor-view .footer,.panel-orbit .footer{flex-shrink:0!important;position:relative!important;background:#090909;z-index:4}
 
 #sat-count{font-variant-numeric:tabular-nums}
 
@@ -238,12 +238,12 @@
 .panel-globe .visual{padding-bottom:30px!important}
 .panel-globe .visual .globe{transform:translateY(-8px)}
 .panel-globe .globe-caption{bottom:10px}
-.panel-globe>.footer{position:relative;z-index:4;flex:0 0 auto;margin-top:0;padding:5px 7px;background:#090909;line-height:1.2}
+.deck .panel-globe>.footer{position:relative;z-index:4;flex:0 0 auto;margin-top:0;padding:5px 7px;background:#090909;line-height:1.2}
 .panel-orbit .panel-body{display:flex;flex:1 1 0;min-height:0;flex-direction:column;justify-content:space-between;gap:5px;padding:5px 6px 8px;overflow:hidden}
 .panel-orbit .panel-body>.kicker,.panel-orbit #iss-alt,.panel-orbit #iss-status,.panel-orbit .line,.panel-orbit .rows,.panel-orbit .panel-body>.small:last-child{flex:0 0 auto}
 .panel-orbit .rows{gap:3px}
 .panel-orbit .panel-body>.small:last-child{margin-top:auto;padding-top:4px;padding-bottom:10px}
-.panel-orbit>.footer{flex:0 0 auto;margin-top:0;padding:5px 7px;line-height:1.2}
+.deck .panel-orbit>.footer{flex:0 0 auto;margin-top:0;padding:5px 7px;line-height:1.2}
 .panel-video .video-fallback{background:#000!important;gap:12px;justify-content:center;align-items:center}
 .panel-video .video-fallback:before{content:"[ SIGNAL OFFLINE ]"!important;display:block;padding:7px 10px;border:1px solid #444;background:#000;color:#aaa;font:9px/1.3 "SFMono-Regular",Consolas,monospace;letter-spacing:.08em}
 .panel-video .video-fallback .medium,.panel-video .video-fallback .small{display:none!important}
@@ -257,7 +257,7 @@
 .panel-cameras>.footer{display:flex;align-items:center;gap:16px!important;column-gap:16px!important;row-gap:6px;flex-wrap:wrap;padding:5px 8px}
 .panel-cameras>.footer span{margin:0 8px 0 0;flex:0 0 auto}
 .panel-cameras>.footer a{margin:0 0 0 4px;flex:0 0 auto;white-space:nowrap}
-@media(orientation:landscape) and (max-height:760px){.panel-globe .visual{padding-bottom:26px!important}.panel-orbit .panel-body{padding-bottom:7px}.panel-orbit .panel-body>.small:last-child{padding-bottom:8px}.panel-orbit>.footer{padding:4px 5px}.camera-overlay{top:3px;left:3px}.camera-timestamp,.camera-state{bottom:3px}.panel-cameras>.footer{gap:16px!important;padding:4px 6px}}
+@media(orientation:landscape) and (max-height:760px){.panel-globe .visual{padding-bottom:26px!important}.panel-orbit .panel-body{padding-bottom:7px}.panel-orbit .panel-body>.small:last-child{padding-bottom:8px}.deck .panel-orbit>.footer{padding:4px 5px}.camera-overlay{top:3px;left:3px}.camera-timestamp,.camera-state{bottom:3px}.panel-cameras>.footer{gap:16px!important;padding:4px 6px}}
 @media(max-width:700px){.panel-cameras>.footer{gap:12px!important}.camera-overlay strong{font-size:9px!important}.camera-overlay .camera-coordinates{font-size:8px}}
 /* Fullscreen ISS media and portrait layout corrections */
 .iss-live-modal{position:fixed;inset:0;z-index:20000;display:none;background:#000}.iss-live-modal.is-open{display:block}
@@ -306,7 +306,7 @@
   padding-top: 6px;
   line-height: 1.35;
 }
-.panel-earthdata .monitor-tabs{
+.deck .panel-earthdata .monitor-tabs{
   gap: 2px;
   padding: 3px 5px;
 }
@@ -317,7 +317,7 @@
   line-height: 1.15;
   white-space: nowrap;
 }
-.panel-earthdata .monitor-view .metrics{
+.deck .panel-earthdata .monitor-view .metrics{
   margin-top: 2px;
 }
 @media (orientation: landscape) and (max-height: 760px){
@@ -325,7 +325,7 @@
   .panel-weather > .footer{padding: 5px !important;margin-top: 3px !important;font-size: 8px}
   .panel-stars > .footer{padding: 5px 6px 6px !important}
   .panel-orbit > .footer{margin-top: 3px !important;padding-top: 4px}
-  .panel-earthdata .monitor-tabs{padding: 2px 4px;gap: 2px}
+  .deck .panel-earthdata .monitor-tabs{padding: 2px 4px;gap: 2px}
   .panel-earthdata .monitor-tab{font-size: 7px;padding: 3px 1px;letter-spacing: 0}
 }
 
@@ -338,13 +338,13 @@
 .panel-orbit{grid-column:1;grid-row:2}
 .panel-earthdata{grid-column:2/6;grid-row:2}
 .panel-cameras{grid-column:1/6;grid-row:3}
-.panel-earthdata .monitor-tabs,.panel-earthdata .monitor-view .footer,
-.panel-weather>.footer,.panel-orbit>.footer,.panel-globe>.footer{display:none!important}
-.panel-earthdata .monitor-view .panel-body>.line,
-.panel-earthdata .monitor-view .panel-body>.row,
-.panel-earthdata .monitor-view .panel-body>.small{display:none}
-.panel-earthdata .monitor-view .metrics{grid-template-columns:minmax(0,1fr);max-width:220px}
-.panel-earthdata .monitor-view .metric:nth-child(2){display:none}
+.deck .panel-earthdata .monitor-tabs,.deck .panel-earthdata .monitor-view .footer,
+.deck .panel-weather>.footer,.deck .panel-orbit>.footer,.deck .panel-globe>.footer{display:none!important}
+.deck .panel-earthdata .monitor-view .panel-body>.line,
+.deck .panel-earthdata .monitor-view .panel-body>.row,
+.deck .panel-earthdata .monitor-view .panel-body>.small{display:none}
+.deck .panel-earthdata .monitor-view .metrics{grid-template-columns:minmax(0,1fr);max-width:220px}
+.deck .panel-earthdata .monitor-view .metric:nth-child(2){display:none}
 .panel-head h2{cursor:pointer}
 .details-dialog{width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;background:#000;color:#eee;border:1px solid #262626}
 .details-dialog::backdrop{background:#000}
@@ -363,7 +363,7 @@
  .panel-orbit{grid-column:1;grid-row:auto}
  .panel-earthdata{grid-column:2;grid-row:auto}
  .panel-cameras{grid-column:1/3;grid-row:auto;min-height:260px}
- .panel-earthdata .monitor-view .metrics{max-width:100%}
+ .deck .panel-earthdata .monitor-view .metrics{max-width:100%}
 }
 @media(orientation:landscape) and (max-height:760px){
  .grid{grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(0,.75fr)}
