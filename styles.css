@@ -471,3 +471,39 @@ body.expert-mode .simple-explanation{display:none}
  .actions{flex-wrap:wrap}
  .critical-ticker{font-size:9px}
 }
+
+
+/* TOUCH-FIRST / TACTICAL UI */
+:root{--deck-black:#000;--deck-panel:#080808;--deck-line:#262626;--deck-target:48px}
+html{background:#000;scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+body,#deck{background:#000;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
+button,a,[role="button"],[data-help-term]{touch-action:manipulation}
+button,.actions a,.panel-head button,#complexity-toggle,#expert-catalog,#dialog-close,#help-close,#term-close{box-sizing:border-box;min-height:48px;min-width:48px;border:1px solid #262626;border-radius:0!important;background:#080808;color:#e8e8e8;font:inherit;cursor:pointer;transition:background-color 90ms linear,color 90ms linear,border-color 90ms linear}
+.panel-head button{flex:0 0 auto}
+button:active,a:active,[role="button"]:active,[data-help-term]:active,.touch-pressed{background:#fff!important;color:#000!important;border-color:#fff!important}
+button:active *,a:active *,[role="button"]:active *,.touch-pressed *{color:#000!important}
+button:focus-visible,a:focus-visible,[role="button"]:focus-visible,[data-help-term]:focus-visible{outline:2px solid #fff;outline-offset:2px}
+[data-help-term]{display:inline-flex;align-items:center;min-height:48px;padding:0 8px;border-bottom:1px dashed #525252;cursor:pointer}
+.panel{position:relative;min-width:0;border:1px solid #262626;border-radius:0!important;background:#080808}
+.panel[data-status="warning"]{border-color:#a88732}
+.panel[data-status="critical"]{border-color:#ff5656;animation:deck-critical-border 1.5s steps(2,end) infinite}
+.panel[data-status="critical"] .panel-head::after{content:"[!]";display:inline-flex;align-items:center;justify-content:center;min-width:48px;min-height:48px;margin-left:auto;color:#ff5656;font-weight:800}
+.panel[data-status="scanning"]{animation:deck-scan-focus 1.1s ease-out}
+@keyframes deck-critical-border{0%,100%{border-color:#612020;box-shadow:inset 0 0 0 0 transparent}50%{border-color:#ff5656;box-shadow:inset 0 0 0 1px #612020}}
+@keyframes deck-scan-focus{0%{border-color:#fff;box-shadow:inset 0 0 0 2px #fff}35%{border-color:#fff;box-shadow:inset 0 0 0 1px #777}100%{border-color:var(--deck-line,#262626);box-shadow:inset 0 0 0 0 transparent}}
+.telemetry-toast{position:fixed;z-index:10000;right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;width:min(460px,calc(100vw - 24px));padding:12px;border:1px solid #666;border-radius:0!important;background:#000;color:#fff;font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.telemetry-toast[hidden],.term-popover[hidden]{display:none!important}
+.telemetry-toast__message{min-width:0;overflow-wrap:anywhere}
+.telemetry-toast__tag{display:block;margin-bottom:4px;color:#aaa;font-size:10px;letter-spacing:.08em}
+.telemetry-toast__action{min-width:100px;min-height:48px;padding:0 10px;border:1px solid #777;border-radius:0!important;background:#080808;color:#fff;font:inherit;white-space:nowrap}
+.telemetry-toast__action:active{background:#fff;color:#000}
+.term-popover{position:fixed;z-index:10001;right:12px;bottom:max(88px,calc(env(safe-area-inset-bottom) + 76px));left:12px;width:auto;max-width:520px;margin-left:auto;padding:16px;border:1px solid #666;border-radius:0!important;background:#000;color:#eee;font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.term-popover strong{display:block;padding-right:48px;color:#fff;letter-spacing:.08em}
+.term-popover p{margin:10px 0 0;color:#bdbdbd}
+#term-close{position:absolute;top:4px;right:4px}
+html,body{overscroll-behavior-y:contain}
+.panel,.panel-body{min-width:0}
+.panel iframe,.panel video,.panel canvas,.panel .map,.panel .chart,.panel [data-gesture-surface]{max-width:100%;touch-action:pan-x pan-y}
+@media(orientation:landscape) and (max-height:760px){#deck{min-height:100dvh}.panel-head h2{font-size:clamp(10px,.8vw,13px)}.telemetry-toast{width:min(420px,48vw)}}
+@media(max-width:700px){#monitor-grid{overflow:visible}.panel-head{flex-wrap:wrap}.panel-head h2{font-size:clamp(11px,3vw,14px);overflow-wrap:anywhere}.telemetry-toast{grid-template-columns:minmax(0,1fr);gap:8px}.telemetry-toast__action{width:100%}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
