@@ -84,6 +84,7 @@ async function loadTransportFeed(){
   content.append(section);
  }
  status.textContent=failures===0?"LIVE VPE DATA · "+totalAlerts+" active service alerts · "+totalTrips+" trip updates":"PARTIAL FEED FAILURE · "+failures+" of "+feeds.length+" sources unavailable";
+ const summary=$("strategic-transit");if(summary)summary.textContent=failures===0?(totalAlerts+" ALERTS · "+totalTrips+" TRIP UPDATES"):"FEED ERROR · "+failures+"/"+feeds.length;
  stamp.textContent="Retrieved: "+new Date().toISOString()+" · Source: VPE OpenData";
 }
 
