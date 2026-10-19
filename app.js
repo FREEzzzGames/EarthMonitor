@@ -304,10 +304,13 @@ document.querySelectorAll(".panel-head h2").forEach(heading=>{
  openDetails=function(id){priorOpenDetails(id);if(id==="radar")renderDrilldown();};
  refreshAirspaceRadar();setInterval(refreshAirspaceRadar,60000);
 
- // Public-source anomaly terminal. No fabricated sensor values and no client secrets.
- const anomalyState={active:"space",kp:null,alerts:[],updated:null,volcanoes:[],gauges:[]};
+
+ // Public-source anomaly terminal: lazy loading, per-source TTL cache, bounded fetches.
+ const anomalyState={active:"space",kp:null,alerts:[],updated:null,volcanoes:[],gauges:[],radiation:[],neos:[],launches:[],debris:[],dns:[],errors:{}};
  const anomalyTabs=[...document.querySelectorAll("[data-anomaly-tab]")];
  const anomalyContent=$("anomaly-content");
+ const anomalyCache=new Map();
+ const anomalyTTL={space:60000,lightning:300000,volcano:300000,cyber:300000,hydro:300000,dns:120000,radiation:300000,neo:600000,launches:300000,debris:900000};
  const safeText=v=>String(v??"—").replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
  const anomalyTime=()=>new Date().toISOString().replace("T"," ").slice(0,16)+" UTC";
  const anomalySources={
@@ -315,57 +318,95 @@ document.querySelectorAll(".panel-head h2").forEach(heading=>{
   lightning:{title:"LIGHTNING / GLOBAL DETECTION",url:"https://www.lightningmaps.org/",label:"LightningMaps live map"},
   volcano:{title:"VOLCANOES / NASA EONET",url:"https://eonet.gsfc.nasa.gov/api/v3/events?status=open",label:"NASA EONET open events"},
   cyber:{title:"CYBER NET / INTERNET DISRUPTIONS",url:"https://radar.cloudflare.com/",label:"Cloudflare Radar public dashboard"},
-  hydro:{title:"HYDRO / WATER LEVELS",url:"https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json?waters=true",label:"PEGELONLINE · German Federal Waterways"}
+  hydro:{title:"HYDRO / WATER LEVELS",url:"https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json?waters=true",label:"PEGELONLINE · German Federal Waterways"},
+  dns:{title:"DNS // NET",url:"https://root-servers.org/",label:"Root Server Technical Operations Association"},
+  radiation:{title:"RADIATION / SAFecast",url:"https://api.safecast.org/measurements.json?limit=20",label:"Safecast open measurements"},
+  neo:{title:"NEO / JPL CLOSE APPROACH",url:"https://ssd-api.jpl.nasa.gov/cad.api?date-min=now&date-max=%2B30&dist-max=0.05&diameter=true&fullname=true&sort=date&limit=20",label:"NASA/JPL CNEOS CAD API"},
+  launches:{title:"LAUNCHES / LAUNCH LIBRARY 2",url:"https://ll.thespacedevs.com/2.2.0/launch/upcoming/?limit=10&mode=list",label:"The Space Devs Launch Library 2"},
+  debris:{title:"ORBITAL DEBRIS / CELESTRAK",url:"https://celestrak.org/NORAD/elements/gp.php?NAME=COSMOS%202251%20DEB&FORMAT=JSON",label:"CelesTrak GP/OMM data"}
  };
- function anomalyRender(){
-  anomalyTabs.forEach(b=>{const on=b.dataset.anomalyTab===anomalyState.active;b.classList.toggle("is-active",on);b.setAttribute("aria-selected",String(on));});
-  const s=anomalySources[anomalyState.active];let body="";
-  if(anomalyState.active==="space"){
-   const kp=anomalyState.kp;
-   body='<div class="anomaly-state"><strong>'+s.title+'</strong><span class="'+(kp!==null&&kp>=5?'anomaly-warn':'anomaly-good')+'" id="anomaly-space-kp">KP '+(kp===null?'—':kp.toFixed(1))+' / 9</span><p>'+(kp===null?'Live Kp feed unavailable; retrying.':kp>=5?'Geomagnetic storm threshold reached (Kp ≥ 5).':'No geomagnetic storm threshold detected in latest Kp sample.')+'</p><div class="anomaly-meta">SOURCE: '+s.label+' · '+anomalyTime()+'</div><a href="'+s.url+'" target="_blank" rel="noopener noreferrer">OPEN OFFICIAL FEED ↗</a></div>';
-  } else if(anomalyState.active==="volcano"){
-   body='<div class="anomaly-state"><strong>'+s.title+'</strong><span>'+anomalyState.volcanoes.length+' OPEN EVENTS</span><p>NASA EONET event catalog; this is an event listing, not a volcano alert-level service.</p><div class="anomaly-list"><ul>'+ (anomalyState.volcanoes.slice(0,5).map(e=>'<li>'+safeText(e.title)+' · '+safeText(e.geometry?.[0]?.date?.slice(0,10)||"date unavailable")+'</li>').join("")||"<li>No open volcano events returned, or feed unavailable.</li>")+'</ul></div><a href="'+s.url+'" target="_blank" rel="noopener noreferrer">OPEN NASA EONET ↗</a></div>';
-  } else if(anomalyState.active==="hydro"){
-   body='<div class="anomaly-state"><strong>'+s.title+'</strong><span>'+anomalyState.gauges.length+' STATIONS</span><p>Public station directory only. No water-level value is shown unless a station measurement is successfully retrieved.</p><div class="anomaly-list"><ul>'+(anomalyState.gauges.slice(0,5).map(g=>'<li>'+safeText(g.shortname||g.longname||g.uuid)+' · '+safeText(g.water?.shortname||g.water?.longname||"waterway")+'</li>').join("")||"<li>Station list unavailable or no matching stations.</li>")+'</ul></div><a href="'+s.url+'" target="_blank" rel="noopener noreferrer">OPEN PEGELONLINE ↗</a></div>';
-  } else if(anomalyState.active==="lightning"){
-   body='<div class="anomaly-state"><strong>'+s.title+'</strong><span class="anomaly-neutral">EXTERNAL LIVE MAP</span><p>No unrestricted, stable global lightning-detection JSON API is used here. The dashboard does not invent strike counts; open the live provider map.</p><a href="'+s.url+'" target="_blank" rel="noopener noreferrer">OPEN LIGHTNING MAP ↗</a><div class="anomaly-meta">FEED STATE: provider page · no embedded strike telemetry</div></div>';
-  } else {
-   body='<div class="anomaly-state"><strong>'+s.title+'</strong><span class="anomaly-neutral">PUBLIC DASHBOARD</span><p>Cloudflare Radar publishes public internet observations and outage context. Its API requires credentials for many endpoints; no API token is exposed in this client.</p><a href="'+s.url+'" target="_blank" rel="noopener noreferrer">OPEN CLOUDFLARE RADAR ↗</a><div class="anomaly-meta">FEED STATE: external dashboard · authenticated API not configured</div></div>';
-  }
-  anomalyContent.innerHTML=body;
-  $("anomaly-updated").textContent="UPDATED "+anomalyTime()+" · PUBLIC DATA ONLY";
- }
  async function anomalyFetch(url,timeout=9000){
   const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),timeout);
   try{const res=await fetch(url,{signal:controller.signal,cache:"no-store",headers:{Accept:"application/json"}});if(!res.ok)throw new Error("HTTP "+res.status);return await res.json();}
   finally{clearTimeout(timer);}
  }
- async function refreshAnomalySources(){
-  const jobs=[
-   anomalyFetch(anomalySources.space.url).then(data=>{const row=Array.isArray(data)?data[data.length-1]:null;const value=Number(row?.kp_index??row?.kp);if(Number.isFinite(value)){anomalyState.kp=value;if(value>=5)pushCriticalAlert("SPACE WEATHER","NOAA planetary Kp reached "+value.toFixed(1)+" (storm threshold Kp ≥ 5).",anomalySources.space.url);}}).catch(()=>{anomalyState.kp=null;}),
-   anomalyFetch(anomalySources.volcano.url).then(data=>{const events=Array.isArray(data.events)?data.events:[];anomalyState.volcanoes=events.filter(e=>(e.categories||[]).some(c=>/volcano/i.test(c.title||c.id||"")));}).catch(()=>{anomalyState.volcanoes=[];}),
-   anomalyFetch(anomalySources.hydro.url).then(data=>{const rows=Array.isArray(data)?data:[];anomalyState.gauges=rows.filter(g=>/enz|nagold|neckar|rhein/i.test((g.water?.shortname||"")+" "+(g.water?.longname||"")+" "+(g.shortname||"")+" "+(g.longname||"")));}).catch(()=>{anomalyState.gauges=[];})
-  ];
-  await Promise.allSettled(jobs);anomalyState.updated=Date.now();anomalyRender();renderCriticalTicker();
+ async function anomalyCached(key,loader,force=false){
+  const old=anomalyCache.get(key),ttl=anomalyTTL[key]||300000;
+  if(!force&&old&&Date.now()-old.at<ttl)return old.value;
+  if(old?.promise&&!force)return old.promise;
+  const promise=Promise.resolve().then(loader).then(value=>{anomalyCache.set(key,{at:Date.now(),value});delete anomalyState.errors[key];return value;}).catch(error=>{anomalyState.errors[key]=error?.message||"feed unavailable";if(old?.value!==undefined)return old.value;throw error;});
+  anomalyCache.set(key,{at:old?.at||0,value:old?.value,promise});
+  try{return await promise;}finally{const current=anomalyCache.get(key);if(current?.promise===promise)delete current.promise;}
  }
  function pushCriticalAlert(source,message,url){
-  const key=source+"|"+message;
-  if(anomalyState.alerts.some(a=>a.key===key))return;
+  const key=source+"|"+message;if(anomalyState.alerts.some(a=>a.key===key))return;
   anomalyState.alerts.unshift({key,source,message,url,at:Date.now()});anomalyState.alerts=anomalyState.alerts.slice(0,12);
  }
+ function setAnomalyFlag(key,on){const node=document.querySelector('[data-anomaly-alert="'+key+'"]');if(node)node.hidden=!on;}
  function renderCriticalTicker(){
   const textNode=$("critical-ticker-text"),timeNode=$("critical-ticker-time");if(!textNode)return;
   const alert=anomalyState.alerts[0];
-  textNode.textContent=alert?"⚠ "+alert.source+" · "+alert.message:"NO ACTIVE THRESHOLD ALERTS · PUBLIC FEEDS CONNECTED / EXTERNAL PROVIDERS STATUS BELOW";
+  textNode.textContent=alert?"⚠ "+alert.source+" · "+alert.message:"NO ACTIVE THRESHOLD ALERTS · LIVE MODULES LOAD ON DEMAND";
   timeNode.textContent=anomalyState.updated?new Date(anomalyState.updated).toISOString().slice(11,16)+" UTC":"UTC --:--";
  }
- anomalyTabs.forEach(b=>b.addEventListener("click",()=>{anomalyState.active=b.dataset.anomalyTab;anomalyRender();}));
+ function anomalyLink(url,label){return '<a href="'+url+'" target="_blank" rel="noopener noreferrer">'+label+' ↗</a>';}
+ function anomalyList(items,empty){return '<div class="anomaly-list"><ul>'+(items.length?items.join(""):"<li>"+empty+"</li>")+"</ul></div>";}
+ function anomalyRender(){
+  anomalyTabs.forEach(b=>{const on=b.dataset.anomalyTab===anomalyState.active;b.classList.toggle("is-active",on);b.setAttribute("aria-selected",String(on));});
+  const key=anomalyState.active,s=anomalySources[key];let body="";
+  const fail=anomalyState.errors[key],stamp=anomalyCache.get(key)?.at;
+  const meta='<div class="anomaly-meta">SOURCE: '+safeText(s.label)+' · '+(stamp?new Date(stamp).toISOString().replace("T"," ").slice(0,16)+" UTC":"NO SUCCESSFUL SAMPLE")+(fail?' · LAST ERROR: '+safeText(fail):"")+'</div>';
+  if(key==="space"){
+   const kp=anomalyState.kp;body='<div class="anomaly-state"><strong>'+s.title+'</strong><span class="'+(kp!==null&&kp>=5?'anomaly-warn':'anomaly-good')+'">KP '+(kp===null?'—':kp.toFixed(1))+' / 9</span><p>'+(kp===null?'Live Kp feed unavailable; retrying.':kp>=5?'Geomagnetic storm threshold reached (Kp ≥ 5).':'No geomagnetic storm threshold detected in latest Kp sample.')+'</p>'+meta+anomalyLink(s.url,"OPEN OFFICIAL FEED")+'</div>';
+  }else if(key==="volcano"){
+   body='<div class="anomaly-state"><strong>'+s.title+'</strong><span>'+anomalyState.volcanoes.length+' OPEN EVENTS</span><p>Event catalogue, not official volcano alert levels.</p>'+anomalyList(anomalyState.volcanoes.slice(0,5).map(e=>'<li>'+safeText(e.title)+' · '+safeText(e.geometry?.[0]?.date?.slice(0,10)||"date unavailable")+'</li>'),"No open events returned, or feed unavailable.")+meta+anomalyLink(s.url,"OPEN NASA EONET")+'</div>';
+  }else if(key==="hydro"){
+   body='<div class="anomaly-state"><strong>'+s.title+'</strong><span>'+anomalyState.gauges.length+' STATIONS</span><p>Station metadata only; no water level is shown unless a measurement was fetched.</p>'+anomalyList(anomalyState.gauges.slice(0,5).map(g=>'<li>'+safeText(g.shortname||g.longname||g.uuid)+' · '+safeText(g.water?.shortname||g.water?.longname||"waterway")+'</li>'),"Station list unavailable or no regional matches.")+meta+anomalyLink(s.url,"OPEN PEGELONLINE")+'</div>';
+  }else if(key==="lightning"){
+   body='<div class="anomaly-state"><strong>'+s.title+'</strong><span class="anomaly-neutral">EXTERNAL LIVE MAP</span><p>No unrestricted stable global strike JSON feed is embedded. Strike counts are not fabricated.</p>'+meta+anomalyLink(s.url,"OPEN LIGHTNING MAP")+'</div>';
+  }else if(key==="cyber"){
+   body='<div class="anomaly-state"><strong>'+s.title+'</strong><span class="anomaly-neutral">PUBLIC DASHBOARD</span><p>Some Radar API endpoints require credentials. No secret is shipped in this client.</p>'+meta+anomalyLink(s.url,"OPEN CLOUDFLARE RADAR")+'</div>';
+  }else if(key==="dns"){
+   body='<div class="anomaly-state"><strong>'+s.title+'</strong><span>'+anomalyState.dns.filter(x=>x.ok).length+' / '+anomalyState.dns.length+' DNS RESOLVES</span><p>HTTPS DNS-over-HTTPS checks resolve root-server hostnames. Browser code cannot send ICMP ping or prove root-server service health; elapsed time is client-to-DoH latency, not authoritative server ping.</p>'+anomalyList(anomalyState.dns.map(x=>'<li><b>'+safeText(x.host)+'</b> · '+(x.ok?'RESOLVED':'FAILED')+' · '+(x.ms===null?'—':x.ms+' ms DoH request')+'</li>'),"DNS checks not run yet.")+meta+anomalyLink(s.url,"ROOT SERVER DIRECTORY")+'</div>';
+  }else if(key==="radiation"){
+   const rows=anomalyState.radiation,peak=rows.reduce((m,x)=>Math.max(m,Number(x.value)||0),0),alert=rows.some(x=>/usv/h|µsv/h|μsv/h/i.test(x.unit||"")&&Number(x.value)>0.5);
+   setAnomalyFlag("radiation",alert);
+   body='<div class="anomaly-state"><strong>'+s.title+'</strong><span class="'+(alert?'anomaly-warn':'anomaly-neutral')+'">'+(rows.length?rows.length+' RECENT READINGS':'NO READINGS')+'</span><p>'+(alert?'[!] Reading exceeds the dashboard review threshold of 0.5 µSv/h. This is a UI screening threshold, not a public-health or regulatory alarm.':'Safecast crowdsourced readings are not a continuous calibrated global sensor network. Values are shown with original units and timestamps.')+'</p>'+anomalyList(rows.slice(0,6).map(x=>'<li>'+safeText(x.value)+' '+safeText(x.unit)+' · '+safeText(x.captured_at||x.created_at||"timestamp unavailable")+' · '+safeText(x.latitude)+', '+safeText(x.longitude)+'</li>'),"Feed unavailable or no recent measurements.")+meta+anomalyLink(s.url,"OPEN SAFecast API")+'</div>';
+  }else if(key==="neo"){
+   const rows=anomalyState.neos,critical=rows.filter(x=>Number(x[4])<0.00257);setAnomalyFlag("neo",critical.length>0);
+   body='<div class="anomaly-state"><strong>'+s.title+'</strong><span class="'+(critical.length?'anomaly-warn':'anomaly-neutral')+'">'+rows.length+' CLOSE APPROACHES</span><p>'+(critical.length?'[!] At least one listed approach is within one lunar distance (0.00257 AU). This is a proximity flag, not a predicted impact.':'[!] appears only for approaches within one lunar distance. Close approach alone does not mean collision risk.')+'</p>'+anomalyList(rows.slice(0,7).map(x=>'<li class="'+(Number(x[4])<0.00257?'anomaly-warn':'')+'">'+(Number(x[4])<0.00257?'[!] ':'')+safeText(x[13]||x[0])+' · '+safeText(x[3])+' · '+safeText((Number(x[4])*149597870.7).toLocaleString("en-US",{maximumFractionDigits:0}))+' km · '+safeText(x[7])+' km/s</li>'),"No approaches returned or JPL feed unavailable.")+meta+anomalyLink(s.url,"OPEN NASA/JPL CAD API")+'</div>';
+  }else if(key==="launches"){
+   body='<div class="anomaly-state"><strong>'+s.title+'</strong><span>'+anomalyState.launches.length+' UPCOMING</span>'+anomalyList(anomalyState.launches.slice(0,7).map(x=>'<li><b>'+safeText(x.name)+'</b> · '+safeText(x.net||x.window_start||"T- TBD")+' · '+safeText(x.pad?.location?.name||"launch site unavailable")+'</li>'),"Launch feed unavailable or no upcoming launches.")+meta+anomalyLink(s.url,"OPEN LAUNCH LIBRARY 2")+'</div>';
+  }else if(key==="debris"){
+   body='<div class="anomaly-state"><strong>'+s.title+'</strong><span>'+anomalyState.debris.length+' TRACKED OBJECTS</span><p>Sample of named debris clouds (COSMOS 2251, IRIDIUM 33, FENGYUN 1C). This is not a complete census of all orbital debris; orbital elements are not a collision forecast.</p>'+anomalyList(anomalyState.debris.slice(0,7).map(x=>'<li>'+safeText(x.OBJECT_NAME||x.object_name||x.OBJECT_ID||"DEBRIS OBJECT")+' · NORAD '+safeText(x.NORAD_CAT_ID||x.NORAD_CAT_ID||"—")+'</li>'),"CelesTrak feed unavailable or no matching catalogued objects.")+meta+anomalyLink(s.url,"OPEN CELESTRAK DATA")+'</div>';
+  }
+  anomalyContent.innerHTML=body;
+  $("anomaly-updated").textContent=stamp?"CACHED SAMPLE "+new Date(stamp).toISOString().slice(11,16)+" UTC"+(fail?" · STALE / REQUEST FAILED":""):"WAITING FOR "+key.toUpperCase();
+ }
+ async function loadAnomalyTab(key,force=false){
+  const loaders={
+   space:async()=>{const d=await anomalyCached("space",()=>anomalyFetch(anomalySources.space.url),force);const row=Array.isArray(d)?d[d.length-1]:null;const kp=Number(row?.kp_index??row?.kp);anomalyState.kp=Number.isFinite(kp)?kp:null;if(anomalyState.kp!==null&&anomalyState.kp>=5)pushCriticalAlert("SPACE WEATHER","NOAA planetary Kp reached "+anomalyState.kp.toFixed(1)+" (storm threshold Kp ≥ 5).",anomalySources.space.url);},
+   volcano:async()=>{const d=await anomalyCached("volcano",()=>anomalyFetch(anomalySources.volcano.url),force);anomalyState.volcanoes=(Array.isArray(d.events)?d.events:[]).filter(e=>(e.categories||[]).some(c=>/volcano/i.test(c.title||c.id||"")));},
+   hydro:async()=>{const d=await anomalyCached("hydro",()=>anomalyFetch(anomalySources.hydro.url),force);const rows=Array.isArray(d)?d:[];anomalyState.gauges=rows.filter(g=>/enz|nagold|neckar|rhein/i.test((g.water?.shortname||"")+" "+(g.water?.longname||"")+" "+(g.shortname||"")+" "+(g.longname||"")));},
+   dns:async()=>{const hosts=["a.root-servers.net","b.root-servers.net","c.root-servers.net","d.root-servers.net","e.root-servers.net","f.root-servers.net","g.root-servers.net","h.root-servers.net","i.root-servers.net","j.root-servers.net","k.root-servers.net","l.root-servers.net","m.root-servers.net"];anomalyState.dns=await Promise.all(hosts.map(async host=>{const started=performance.now();try{const d=await anomalyCached("dns:"+host,()=>anomalyFetch("https://cloudflare-dns.com/dns-query?name="+encodeURIComponent(host)+"&type=A",6000),force);return {host,ok:Array.isArray(d.Answer)&&d.Answer.length>0,ms:Math.round(performance.now()-started)};}catch{return {host,ok:false,ms:null};}}));},
+   radiation:async()=>{const d=await anomalyCached("radiation",()=>anomalyFetch(anomalySources.radiation.url),force);anomalyState.radiation=Array.isArray(d)?d:Array.isArray(d.measurements)?d.measurements:[];},
+   neo:async()=>{const d=await anomalyCached("neo",()=>anomalyFetch(anomalySources.neo.url),force);const fields=d.fields||[];const data=Array.isArray(d.data)?d.data:[];anomalyState.neos=data.map(row=>{const o={};fields.forEach((f,i)=>o[f]=row[i]);return [o.des,o.orbit_id,o.jd,o.cd,o.dist,o.dist_min,o.dist_max,o.v_rel,o.v_inf,o.t_sigma_f,o.h,o.diameter,o.diameter_sigma,o.fullname];});},
+   launches:async()=>{const d=await anomalyCached("launches",()=>anomalyFetch(anomalySources.launches.url),force);anomalyState.launches=Array.isArray(d.results)?d.results:[];},
+   debris:async()=>{const urls=["https://celestrak.org/NORAD/elements/gp.php?NAME=COSMOS%202251%20DEB&FORMAT=JSON","https://celestrak.org/NORAD/elements/gp.php?NAME=IRIDIUM%2033%20DEB&FORMAT=JSON","https://celestrak.org/NORAD/elements/gp.php?NAME=FENGYUN%201C%20DEB&FORMAT=JSON"];const sets=await Promise.all(urls.map((url,i)=>anomalyCached("debris"+i,()=>anomalyFetch(url),force).catch(()=>[])));anomalyState.debris=sets.flat().slice(0,100);},
+   lightning:async()=>{},cyber:async()=>{}
+  };
+  if(!loaders[key])return;
+  try{await loaders[key]();}catch(error){anomalyState.errors[key]=error?.message||"feed unavailable";}
+  anomalyState.updated=Date.now();if(anomalyState.active===key)anomalyRender();renderCriticalTicker();
+ }
+ function refreshAnomalySources(){return loadAnomalyTab(anomalyState.active,true);}
+ anomalyTabs.forEach(b=>b.addEventListener("click",()=>{anomalyState.active=b.dataset.anomalyTab;anomalyRender();loadAnomalyTab(anomalyState.active);}));
  $("anomaly-refresh")?.addEventListener("click",refreshAnomalySources);
  document.querySelector('[data-expand="anomalies"]')?.addEventListener("click",()=>{openDetails("anomalies");});
  const anomalyPriorDetails=panelDetails;
- panelDetails=function(id){if(id==="anomalies")return "GLOBAL ANOMALY TERMINAL\nSpace weather uses NOAA SWPC public Kp JSON. Volcano events use NASA EONET. Hydro station metadata uses PEGELONLINE. Lightning is linked to its public live map because no stable unrestricted strike API is embedded. Cyber threat/disruption data links to Cloudflare Radar; authenticated API credentials are intentionally not shipped to browsers.";return anomalyPriorDetails(id);};
+ panelDetails=function(id){if(id==="anomalies")return "GLOBAL ANOMALY TERMINAL\nTen lazy-loaded modules: NOAA SWPC, LightningMaps, NASA EONET, Cloudflare Radar, PEGELONLINE, DNS-over-HTTPS root-server hostname resolution, Safecast observations, NASA/JPL CAD close approaches, Launch Library 2 upcoming launches, and CelesTrak named debris-cloud samples. Values are cached by module; DNS-over-HTTPS is not ICMP ping; Safecast is crowdsourced; NEO proximity is not impact probability; debris sample is not a complete catalog.";return anomalyPriorDetails(id);};
  const anomalyPriorOpen=openDetails;
  openDetails=function(id){anomalyPriorOpen(id);if(id==="anomalies"){setTimeout(()=>{const body=$("dialog-body");if(body)body.innerHTML='<div class="anomaly-content">'+anomalyContent.innerHTML+'</div><div class="anomaly-list"><ul>'+anomalyState.alerts.map(a=>'<li><strong>'+safeText(a.source)+'</strong> · '+safeText(a.message)+' · <a href="'+a.url+'" target="_blank" rel="noopener noreferrer">SOURCE ↗</a></li>').join("")+'</ul></div>';},0);}};
- refreshAnomalySources();setInterval(refreshAnomalySources,300000);
+ anomalyRender();loadAnomalyTab("space");setInterval(()=>{if(anomalyState.active==="space")loadAnomalyTab("space");},60000);
 
 })();
