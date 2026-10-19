@@ -31,5 +31,10 @@ assert.ok(script.includes("setInterval(loadRegionalCameraFeeds,60000)") && scrip
 assert.ok(script.includes("function setLanguage(code") && script.includes("camTitle") && script.includes("rotateCams"), "localization missing");
 assert.ok(html.includes('id="complexity-toggle"') && html.includes('id="expert-catalog"') && html.includes('data-panel="spaceweather"'), "simple/expert navigation or space weather card missing");
 assert.ok(script.includes("function setComplexity") && script.includes("function syncMainSpaceWeather") && script.includes("simple-mode"), "complexity mode logic missing");
+assert.ok(html.includes('src="./js/touch-tactical.js"'), "tactical UI module is not loaded");
+const tactical = await readFile(new URL("../js/touch-tactical.js", import.meta.url), "utf8");
+assert.ok(tactical.includes("function updateKp") && tactical.includes("function updateEarthquakeAlert") && tactical.includes("function focusPanel"), "tactical alert API missing");
+assert.ok(tactical.includes("telemetry-toast") && tactical.includes("touch-pressed") && tactical.includes("data-help-term"), "touch controls or telemetry toast missing");
+assert.ok(css.includes("TOUCH-FIRST / TACTICAL UI") && css.includes("min-height:48px") && css.includes('data-status="critical"'), "touch targets or critical panel styles missing");
 assert.ok(html.includes('id="landscape"') && html.includes('id="refresh"') && html.includes('id="help-open"'), "main controls missing");
 console.log("EARTH_MONITOR_SMOKE_OK", JSON.stringify({ panels: panelIds.length, uniqueIds: idList.length, runtimeRefs: refs.length, externalAssets: 2 }));
