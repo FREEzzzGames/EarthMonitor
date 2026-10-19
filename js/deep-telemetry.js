@@ -52,10 +52,10 @@ async function load(k){
    const r=await fetch(url,{cache:"no-store",signal:ctrl.signal});if(!r.ok)throw new Error("HTTP "+r.status);const raw=await r.text();const lines=raw.trim().split(/\r?\n/);data=lines.slice(0,16).map(line=>line.trim().split(/\s+/));if(lines.length<2)throw new Error("No DART observations");
   }else data=await getJson(url,ctrl.signal);
   if(!data||(typeof data!=="object"&& !Array.isArray(data)))throw new Error("Unexpected provider response");
-  cacheSet(k,data);render(k,data,false,Date.now());
+  cacheSet(k,data);render(k,data,false,Date.now());renderDemoState();
  }catch(e){
   const cached=cacheGet(k);
-  if(cached)render(k,cached.data,true,cached.savedAt);
+  if(cached){render(k,cached.data,true,cached.savedAt);renderDemoState();}
   else{status("[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE","warning");text("deep-summary-status","[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE");text("deep-detail-updated","NO CACHE AVAILABLE · "+(e?.message||"source unavailable"));const host=$("deep-detail-data");host?.replaceChildren();host?.append(metric("DATA STATE","Unavailable"),metric("REASON",(e?.message||"feed unavailable").slice(0,150)))}
  }finally{clearTimeout(timeout)}
 }
