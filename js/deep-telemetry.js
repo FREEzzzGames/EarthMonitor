@@ -29,7 +29,7 @@ function render(k,data,cached=false,savedAt=Date.now()){
   if(host)host.append(metric("PROFILE / ROWS",rows.length));
   listRecords(list,rows,(box,x)=>{const p=document.createElement("p");p.textContent=(Array.isArray(x)?x:Object.values(x)).slice(0,8).join(" · ");box.append(p)});
  }else if(k==="dart"){
-  const rows=Array.isArray(data)?data:(Array.isArray(data?.data)?data.data:[]);
+  const rows=Array.isArray(data)?data:(Array.isArray(data?.rows)?data.rows:(Array.isArray(data?.data)?data.data:[]));
   if(host)host.append(metric("OBSERVATIONS",rows.length));
   listRecords(list,rows,(box,x)=>{const p=document.createElement("p");p.textContent=(Array.isArray(x)?x:Object.entries(x).map(([a,b])=>a+": "+b)).slice(0,10).join(" · ");box.append(p)});
  }else if(k==="orbit"){
