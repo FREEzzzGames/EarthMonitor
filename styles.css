@@ -460,11 +460,11 @@ html,body{background:#000}
 .panel-globe .panel-body{padding:12px}
 .panel-globe .row{padding:2px 0}
 .panel-globe .footer{margin-top:auto}
-.panel-stars{grid-column:span 2}
+.main-grid>.panel-stars{grid-column:span 2}
 .panel-video{min-height:240px}
 .panel-anomalies,.panel-stars{min-width:0}
-.panel-anomalies{grid-column:span 2}
-.panel-cameras{grid-column:1/-1}
+.main-grid>.panel-anomalies{grid-column:span 2}
+.main-grid>.panel-cameras{grid-column:1/-1}
 .panel-earthdata .monitor-tabs{display:flex}
 .panel-earthdata .monitor-view:not(.is-active){display:none!important}
 .panel-earthdata .monitor-view.is-active{display:flex;flex:1 1 auto;min-height:0;flex-direction:column}
@@ -485,8 +485,8 @@ body.expert-mode .simple-explanation{display:none}
  .subbrand{flex:0 1 130px}
  .actions{flex:1 1 100%;justify-content:flex-start}
  .main-grid,.grid#monitor-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
- .panel-stars,.panel-anomalies{grid-column:span 2}
- .panel-cameras{grid-column:1/-1}
+ .main-grid>.panel-stars,.main-grid>.panel-anomalies{grid-column:span 2}
+ .main-grid>.panel-cameras{grid-column:1/-1}
  .panel-cameras .camera-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:640px){
@@ -497,7 +497,7 @@ body.expert-mode .simple-explanation{display:none}
  .status{flex:1 1 100%}
  .actions{width:100%;flex:1 1 100%;justify-content:flex-start}
  .main-grid,.grid#monitor-grid{grid-template-columns:minmax(0,1fr);grid-auto-rows:minmax(180px,auto)}
- .panel-stars,.panel-anomalies,.panel-cameras{grid-column:auto}
+ .main-grid>.panel-stars,.main-grid>.panel-anomalies,.main-grid>.panel-cameras{grid-column:auto}
  .panel-cameras .camera-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
  .panel-head{padding:8px}
  .panel-body{padding:10px}
