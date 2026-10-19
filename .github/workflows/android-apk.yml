@@ -5,6 +5,8 @@ on:
     paths:
       - "android/**"
       - "index.html"
+      - "styles.css"
+      - "app.js"
       - "package.json"
       - "capacitor.config.ts"
       - "scripts/**"
