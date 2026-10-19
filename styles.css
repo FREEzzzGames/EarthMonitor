@@ -507,3 +507,41 @@ html,body{overscroll-behavior-y:contain}
 @media(orientation:landscape) and (max-height:760px){#deck{min-height:100dvh}.panel-head h2{font-size:clamp(10px,.8vw,13px)}.telemetry-toast{width:min(420px,48vw)}}
 @media(max-width:700px){#monitor-grid{overflow:visible}.panel-head{flex-wrap:wrap}.panel-head h2{font-size:clamp(11px,3vw,14px);overflow-wrap:anywhere}.telemetry-toast{grid-template-columns:minmax(0,1fr);gap:8px}.telemetry-toast__action{width:100%}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+
+/* 2026-10-19 viewport repair: prevent the command bar from escaping the viewport
+   and keep every primary module reachable on short landscape screens. */
+.masthead{min-width:0;max-width:100%;flex-wrap:wrap;row-gap:6px;align-content:center}
+.brand{min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+.subbrand{flex:1 1 120px;min-width:0}
+.status{white-space:normal;overflow-wrap:anywhere;min-width:0}
+.actions{min-width:0;max-width:100%;flex-wrap:wrap;gap:4px}
+.actions button{min-width:44px;min-height:36px;padding:4px 7px}
+#complexity-toggle,#expert-catalog{min-height:36px;padding:4px 8px;white-space:nowrap}
+#deck{width:100%;max-width:100%;min-width:0;overflow-x:hidden}
+@media (orientation:landscape) and (max-height:760px){
+  body{overflow:auto}
+  #deck,.deck{height:auto;min-height:100dvh;overflow:visible}
+  .masthead{flex:0 0 auto;display:flex;flex-wrap:wrap;gap:6px;padding-bottom:6px}
+  .brand{font-size:clamp(13px,2vw,22px);white-space:normal;flex:1 1 300px}
+  .status{flex:1 1 190px}
+  .actions{flex:1 1 100%;justify-content:flex-start;overflow:visible}
+  .grid#monitor-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;overflow:visible;flex:none}
+  .grid#monitor-grid>.panel{grid-column:auto;grid-row:auto;min-height:220px}
+  .grid#monitor-grid>.panel-video,.grid#monitor-grid>.panel-cameras{grid-column:span 2;min-height:240px}
+  .panel-head{min-height:36px;flex-wrap:nowrap}
+  .panel-head h2{font-size:clamp(10px,1.15vw,13px);overflow-wrap:anywhere}
+  .panel-head button{min-height:36px;min-width:36px}
+  .panel-body{overflow:auto}
+  .critical-ticker{flex:0 0 auto}
+  .footbar{flex:0 0 auto;white-space:normal;flex-wrap:wrap}
+}
+@media(max-width:560px){
+  .masthead{gap:5px}
+  .brand{flex:1 1 100%;font-size:14px}
+  .status{flex:1 1 100%}
+  .actions{width:100%;justify-content:flex-start}
+  .actions button{min-height:40px}
+  .grid#monitor-grid>.panel{min-height:205px}
+  .grid#monitor-grid>.panel-video,.grid#monitor-grid>.panel-cameras{grid-column:auto;min-height:220px}
+}
