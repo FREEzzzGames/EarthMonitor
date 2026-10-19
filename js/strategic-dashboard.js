@@ -94,7 +94,7 @@ function openModule(id){
  if(id==="global-streams"){openDedicated("global-stream-dialog",'[data-global-select="lightning"]');return}
  if(id==="niche-telemetry"){openDedicated("niche-telemetry-dialog",'[data-niche-select="aircraft"]');return}
  if(id==="deep-telemetry"){openDedicated("deep-telemetry-dialog",'[data-deep-select="dsn"]');return}
- if(id==="transport"){loadTransportFeed();return}
+ if(id==="transport"){const p=$("strategic-dialog-content");p.replaceChildren();const note=document.createElement("p");note.className="strategic-source-note";note.textContent="Loading current public departures…";p.append(note);loadTransport(p);return}
  const panelId=id==="airquality"?"earthdata":id;
  const panel=document.querySelector('#source-library [data-panel="'+panelId+'"]');
  if(!panel){const p=document.createElement("p");p.className="strategic-source-note";p.textContent="MODULE UNAVAILABLE · no matching panel is registered in this build."; $("strategic-dialog-content").replaceChildren(p);return}
