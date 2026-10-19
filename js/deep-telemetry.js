@@ -51,7 +51,7 @@ async function load(k){
   const config=window.EARTHMONITOR_DEEP_CONFIG?.[k];let url=config?.url,data;
   if(!url&&k==="orbit")url="https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=JSON";
   if(!url&&k==="argo")url="https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.json?latitude%2Clongitude%2Ctime%2Cpres%2Ctemp%2Cpsal&time%3E=now-30days&orderBy(%22time%22)&limit(40)";
-  if(!url&&k==="dart")url="https://www.ndbc.noaa.gov/data/realtime2/21413.dart";
+  if(!url&&k==="dart")url="https://www.ndbc.noaa.gov/data/realtime2/21415.dart";
   if(!url)throw new Error("Live API endpoint requires a provider-specific server proxy");
   if(k==="dart"&&!config?.url){
    const r=await fetch(url,{cache:"no-store",signal:ctrl.signal});if(!r.ok)throw new Error("HTTP "+r.status);const raw=await r.text();const lines=raw.trim().split(/\r?\n/);data=lines.slice(0,16).map(line=>line.trim().split(/\s+/));if(lines.length<2)throw new Error("No DART observations");
