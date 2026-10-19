@@ -4,10 +4,18 @@ on:
     branches: [main]
     paths:
       - "android/**"
+      - "index.html"
+      - "package.json"
+      - "capacitor.config.ts"
+      - "scripts/**"
       - ".github/workflows/android-apk.yml"
   pull_request:
     paths:
       - "android/**"
+      - "index.html"
+      - "package.json"
+      - "capacitor.config.ts"
+      - "scripts/**"
       - ".github/workflows/android-apk.yml"
   workflow_dispatch:
 permissions:
@@ -17,6 +25,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Capacitor dependencies
+        run: npm install --no-audit --no-fund
+      - name: Validate dashboard and stage local web bundle
+        run: |
+          npm test
+          npm run build
+      - name: Sync Capacitor Android project
+        run: npx cap sync android
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -26,9 +45,13 @@ jobs:
           gradle-version: "8.13"
       - name: Build debug APK
         run: gradle -p android assembleDebug --no-daemon
+      - name: Verify bundled dashboard and widget
+        run: |
+          test -f android/app/build/outputs/apk/debug/app-debug.apk
+          unzip -l android/app/build/outputs/apk/debug/app-debug.apk | grep -E 'assets/public/index.html|EarthMonitorWidgetProvider'
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: EarthMonitor-android-debug-apk
+          name: EarthMonitor-capacitor-android-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
