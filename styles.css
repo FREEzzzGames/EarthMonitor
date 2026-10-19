@@ -328,3 +328,44 @@
   .panel-earthdata .monitor-tabs{padding: 2px 4px;gap: 2px}
   .panel-earthdata .monitor-tab{font-size: 7px;padding: 3px 1px;letter-spacing: 0}
 }
+
+/* Main Deck + drill-down architecture */
+.grid{grid-template-columns:repeat(5,minmax(0,1fr));grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(0,.78fr)}
+.panel-stars,.panel-moon,.panel-satellites{display:none!important}
+.panel-globe{grid-column:1;grid-row:1}
+.panel-weather{grid-column:5;grid-row:1}
+.panel-video{grid-column:2/4;grid-row:1}
+.panel-orbit{grid-column:1;grid-row:2}
+.panel-earthdata{grid-column:2/6;grid-row:2}
+.panel-cameras{grid-column:1/6;grid-row:3}
+.panel-earthdata .monitor-tabs,.panel-earthdata .monitor-view .footer,
+.panel-weather>.footer,.panel-orbit>.footer,.panel-globe>.footer{display:none!important}
+.panel-earthdata .monitor-view .panel-body>.line,
+.panel-earthdata .monitor-view .panel-body>.row,
+.panel-earthdata .monitor-view .panel-body>.small{display:none}
+.panel-earthdata .monitor-view .metrics{grid-template-columns:minmax(0,1fr);max-width:220px}
+.panel-earthdata .monitor-view .metric:nth-child(2){display:none}
+.panel-head h2{cursor:pointer}
+.details-dialog{width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;background:#000;color:#eee;border:1px solid #262626}
+.details-dialog::backdrop{background:#000}
+.dialog-head{position:sticky;top:0;z-index:2;background:#000;border-bottom:1px solid #262626;padding:12px 16px}
+.dialog-body{max-height:none;height:calc(100dvh - 110px);padding:16px;white-space:normal}
+.dialog-actions{position:sticky;bottom:0;background:#000;border-top:1px solid #262626;padding:10px 16px}
+.details-dialog .drill-panel-content{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:10px}
+.details-dialog .drill-card{border:1px solid #262626;padding:12px;background:#050505;min-width:0}
+.details-dialog .drill-card h3{font-size:11px;letter-spacing:.1em;color:#aaa;margin:0 0 10px}
+.details-dialog .drill-card .footer{display:none}
+@media(max-width:700px){
+ .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto;overflow:visible}
+ .panel-globe{grid-column:1;grid-row:auto}
+ .panel-weather{grid-column:2;grid-row:auto}
+ .panel-video{grid-column:1/3;grid-row:auto;min-height:230px}
+ .panel-orbit{grid-column:1;grid-row:auto}
+ .panel-earthdata{grid-column:2;grid-row:auto}
+ .panel-cameras{grid-column:1/3;grid-row:auto;min-height:260px}
+ .panel-earthdata .monitor-view .metrics{max-width:100%}
+}
+@media(orientation:landscape) and (max-height:760px){
+ .grid{grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(0,.75fr)}
+ .panel-cameras{grid-row:3}
+}
