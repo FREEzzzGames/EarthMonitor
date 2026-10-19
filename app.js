@@ -303,4 +303,69 @@ document.querySelectorAll(".panel-head h2").forEach(heading=>{
  const priorOpenDetails=openDetails;
  openDetails=function(id){priorOpenDetails(id);if(id==="radar")renderDrilldown();};
  refreshAirspaceRadar();setInterval(refreshAirspaceRadar,60000);
+
+ // Public-source anomaly terminal. No fabricated sensor values and no client secrets.
+ const anomalyState={active:"space",kp:null,alerts:[],updated:null,volcanoes:[],gauges:[]};
+ const anomalyTabs=[...document.querySelectorAll("[data-anomaly-tab]")];
+ const anomalyContent=$("anomaly-content");
+ const safeText=v=>String(v??"—").replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
+ const anomalyTime=()=>new Date().toISOString().replace("T"," ").slice(0,16)+" UTC";
+ const anomalySources={
+  space:{title:"SPACE WEATHER / NOAA SWPC",url:"https://services.swpc.noaa.gov/json/planetary_k_index_1m.json",label:"NOAA SWPC public JSON"},
+  lightning:{title:"LIGHTNING / GLOBAL DETECTION",url:"https://www.lightningmaps.org/",label:"LightningMaps live map"},
+  volcano:{title:"VOLCANOES / NASA EONET",url:"https://eonet.gsfc.nasa.gov/api/v3/events?status=open",label:"NASA EONET open events"},
+  cyber:{title:"CYBER NET / INTERNET DISRUPTIONS",url:"https://radar.cloudflare.com/",label:"Cloudflare Radar public dashboard"},
+  hydro:{title:"HYDRO / WATER LEVELS",url:"https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json?waters=true",label:"PEGELONLINE · German Federal Waterways"}
+ };
+ function anomalyRender(){
+  anomalyTabs.forEach(b=>{const on=b.dataset.anomalyTab===anomalyState.active;b.classList.toggle("is-active",on);b.setAttribute("aria-selected",String(on));});
+  const s=anomalySources[anomalyState.active];let body="";
+  if(anomalyState.active==="space"){
+   const kp=anomalyState.kp;
+   body='<div class="anomaly-state"><strong>'+s.title+'</strong><span class="'+(kp!==null&&kp>=5?'anomaly-warn':'anomaly-good')+'" id="anomaly-space-kp">KP '+(kp===null?'—':kp.toFixed(1))+' / 9</span><p>'+(kp===null?'Live Kp feed unavailable; retrying.':kp>=5?'Geomagnetic storm threshold reached (Kp ≥ 5).':'No geomagnetic storm threshold detected in latest Kp sample.')+'</p><div class="anomaly-meta">SOURCE: '+s.label+' · '+anomalyTime()+'</div><a href="'+s.url+'" target="_blank" rel="noopener noreferrer">OPEN OFFICIAL FEED ↗</a></div>';
+  } else if(anomalyState.active==="volcano"){
+   body='<div class="anomaly-state"><strong>'+s.title+'</strong><span>'+anomalyState.volcanoes.length+' OPEN EVENTS</span><p>NASA EONET event catalog; this is an event listing, not a volcano alert-level service.</p><div class="anomaly-list"><ul>'+ (anomalyState.volcanoes.slice(0,5).map(e=>'<li>'+safeText(e.title)+' · '+safeText(e.geometry?.[0]?.date?.slice(0,10)||"date unavailable")+'</li>').join("")||"<li>No open volcano events returned, or feed unavailable.</li>")+'</ul></div><a href="'+s.url+'" target="_blank" rel="noopener noreferrer">OPEN NASA EONET ↗</a></div>';
+  } else if(anomalyState.active==="hydro"){
+   body='<div class="anomaly-state"><strong>'+s.title+'</strong><span>'+anomalyState.gauges.length+' STATIONS</span><p>Public station directory only. No water-level value is shown unless a station measurement is successfully retrieved.</p><div class="anomaly-list"><ul>'+(anomalyState.gauges.slice(0,5).map(g=>'<li>'+safeText(g.shortname||g.longname||g.uuid)+' · '+safeText(g.water?.shortname||g.water?.longname||"waterway")+'</li>').join("")||"<li>Station list unavailable or no matching stations.</li>")+'</ul></div><a href="'+s.url+'" target="_blank" rel="noopener noreferrer">OPEN PEGELONLINE ↗</a></div>';
+  } else if(anomalyState.active==="lightning"){
+   body='<div class="anomaly-state"><strong>'+s.title+'</strong><span class="anomaly-neutral">EXTERNAL LIVE MAP</span><p>No unrestricted, stable global lightning-detection JSON API is used here. The dashboard does not invent strike counts; open the live provider map.</p><a href="'+s.url+'" target="_blank" rel="noopener noreferrer">OPEN LIGHTNING MAP ↗</a><div class="anomaly-meta">FEED STATE: provider page · no embedded strike telemetry</div></div>';
+  } else {
+   body='<div class="anomaly-state"><strong>'+s.title+'</strong><span class="anomaly-neutral">PUBLIC DASHBOARD</span><p>Cloudflare Radar publishes public internet observations and outage context. Its API requires credentials for many endpoints; no API token is exposed in this client.</p><a href="'+s.url+'" target="_blank" rel="noopener noreferrer">OPEN CLOUDFLARE RADAR ↗</a><div class="anomaly-meta">FEED STATE: external dashboard · authenticated API not configured</div></div>';
+  }
+  anomalyContent.innerHTML=body;
+  $("anomaly-updated").textContent="UPDATED "+anomalyTime()+" · PUBLIC DATA ONLY";
+ }
+ async function anomalyFetch(url,timeout=9000){
+  const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),timeout);
+  try{const res=await fetch(url,{signal:controller.signal,cache:"no-store",headers:{Accept:"application/json"}});if(!res.ok)throw new Error("HTTP "+res.status);return await res.json();}
+  finally{clearTimeout(timer);}
+ }
+ async function refreshAnomalySources(){
+  const jobs=[
+   anomalyFetch(anomalySources.space.url).then(data=>{const row=Array.isArray(data)?data[data.length-1]:null;const value=Number(row?.kp_index??row?.kp);if(Number.isFinite(value)){anomalyState.kp=value;if(value>=5)pushCriticalAlert("SPACE WEATHER","NOAA planetary Kp reached "+value.toFixed(1)+" (storm threshold Kp ≥ 5).",anomalySources.space.url);}}).catch(()=>{anomalyState.kp=null;}),
+   anomalyFetch(anomalySources.volcano.url).then(data=>{const events=Array.isArray(data.events)?data.events:[];anomalyState.volcanoes=events.filter(e=>(e.categories||[]).some(c=>/volcano/i.test(c.title||c.id||"")));}).catch(()=>{anomalyState.volcanoes=[];}),
+   anomalyFetch(anomalySources.hydro.url).then(data=>{const rows=Array.isArray(data)?data:[];anomalyState.gauges=rows.filter(g=>/enz|nagold|neckar|rhein/i.test((g.water?.shortname||"")+" "+(g.water?.longname||"")+" "+(g.shortname||"")+" "+(g.longname||"")));}).catch(()=>{anomalyState.gauges=[];})
+  ];
+  await Promise.allSettled(jobs);anomalyState.updated=Date.now();anomalyRender();renderCriticalTicker();
+ }
+ function pushCriticalAlert(source,message,url){
+  const key=source+"|"+message;
+  if(anomalyState.alerts.some(a=>a.key===key))return;
+  anomalyState.alerts.unshift({key,source,message,url,at:Date.now()});anomalyState.alerts=anomalyState.alerts.slice(0,12);
+ }
+ function renderCriticalTicker(){
+  const textNode=$("critical-ticker-text"),timeNode=$("critical-ticker-time");if(!textNode)return;
+  const alert=anomalyState.alerts[0];
+  textNode.textContent=alert?"⚠ "+alert.source+" · "+alert.message:"NO ACTIVE THRESHOLD ALERTS · PUBLIC FEEDS CONNECTED / EXTERNAL PROVIDERS STATUS BELOW";
+  timeNode.textContent=anomalyState.updated?new Date(anomalyState.updated).toISOString().slice(11,16)+" UTC":"UTC --:--";
+ }
+ anomalyTabs.forEach(b=>b.addEventListener("click",()=>{anomalyState.active=b.dataset.anomalyTab;anomalyRender();}));
+ $("anomaly-refresh")?.addEventListener("click",refreshAnomalySources);
+ document.querySelector('[data-expand="anomalies"]')?.addEventListener("click",()=>{openDetails("anomalies");});
+ const anomalyPriorDetails=panelDetails;
+ panelDetails=function(id){if(id==="anomalies")return "GLOBAL ANOMALY TERMINAL\nSpace weather uses NOAA SWPC public Kp JSON. Volcano events use NASA EONET. Hydro station metadata uses PEGELONLINE. Lightning is linked to its public live map because no stable unrestricted strike API is embedded. Cyber threat/disruption data links to Cloudflare Radar; authenticated API credentials are intentionally not shipped to browsers.";return anomalyPriorDetails(id);};
+ const anomalyPriorOpen=openDetails;
+ openDetails=function(id){anomalyPriorOpen(id);if(id==="anomalies"){setTimeout(()=>{const body=$("dialog-body");if(body)body.innerHTML='<div class="anomaly-content">'+anomalyContent.innerHTML+'</div><div class="anomaly-list"><ul>'+anomalyState.alerts.map(a=>'<li><strong>'+safeText(a.source)+'</strong> · '+safeText(a.message)+' · <a href="'+a.url+'" target="_blank" rel="noopener noreferrer">SOURCE ↗</a></li>').join("")+'</ul></div>';},0);}};
+ refreshAnomalySources();setInterval(refreshAnomalySources,300000);
+
 })();
