@@ -91,3 +91,9 @@ assert.ok(!strategic.includes("function loadTransportFeed()"), "unused/unparsed 
 assert.ok(!deep.includes("SIMULATED EXAMPLE DATA") && !deep.includes("deep-demo-sample"), "deep telemetry must not synthesize measurements");
 assert.ok(css.includes(".strategic-dialog-actions button") && css.includes("min-height:48px"), "modal touch targets missing");
 console.log("EARTH_MONITOR_SMOKE_OK", JSON.stringify({ panels: panelIds.length, uniqueIds: idList.length, runtimeRefs: refs.length, externalAssets: 2 }));
+
+assert.ok(strategic.includes("locations/nearby?latitude=48.895&longitude=8.704&distance=100000"), "regional transport must query real stops within 100 km");
+assert.ok(strategic.includes("Promise.allSettled(stations.map") && strategic.includes("No synthetic departures are shown."), "regional transport must aggregate station responses and fail honestly");
+assert.ok(strategic.includes("cloudflare-dns.com/dns-query?name=cloudflare.com&type=") && strategic.includes("infraEnergyNeedsProxy") && strategic.includes("submarinecablemap.com"), "infrastructure must show live DNS and clearly label sources needing backend access");
+assert.ok(strategic.includes("transportLoading") && strategic.includes("infraLoading") && strategic.includes("transportUnavailable"), "new transport and infrastructure states must be localized");
+assert.ok(css.includes("Final touch target normalization") && css.includes(".term-help{display:inline-flex") && css.includes("min-height:48px"), "touch targets must be normalized to 48px");
