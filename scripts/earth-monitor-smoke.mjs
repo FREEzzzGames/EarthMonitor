@@ -80,8 +80,8 @@ assert.ok(html.includes('src="./js/strategic-dashboard.js"'), "strategic dashboa
 for (const language of ["en", "ru", "uk", "de"]) assert.ok(strategic.includes(language+":"), "missing strategic localization: "+language);
 assert.ok(strategic.includes("touchend") && strategic.includes("strategic-dialog-close") && strategic.includes("openGroup"), "drill-down interaction or swipe close missing");
 assert.ok(css.includes(".main-grid.strategic-grid") && css.includes("grid-template-columns:repeat(3,minmax(0,1fr))") && css.includes(".strategic-card:nth-child(4){grid-row:2;grid-column:1}") && css.includes(".strategic-card:nth-child(5){grid-row:2;grid-column:2 / 4") && css.includes("border-radius:0"), "reference-balanced three-column strategic grid missing");
-assert.ok(html.includes("id=\"transport-demo-toggle\"") && html.includes("id=\"deep-demo-toggle\""), "transport/deep telemetry demo controls missing");
-assert.ok(strategic.includes("DEMO / SIMULATION MODE ACTIVE") && strategic.includes("transport-demo-toggle"), "transport demo mode state handling missing");
-assert.ok(deep.includes("deep-demo-toggle") && deep.includes("deep-demo-notice") && deep.includes("SIMULATION MODE ACTIVE"), "deep telemetry simulation mode state handling missing");
-assert.ok(css.includes(".strategic-dialog-actions button") && css.includes(".deep-demo-toolbar button") && css.includes("min-height:48px") && css.includes("transition:background-color .05s"), "modal touch target/inversion styles missing");
+assert.ok(!html.includes("transport-demo-toggle") && !html.includes("deep-demo-toggle"), "production UI must not expose demo controls");
+assert.ok(strategic.includes("loadTransport") && strategic.includes("v6.db.transport.rest"), "public transport feed integration missing");
+assert.ok(!deep.includes("SIMULATED EXAMPLE DATA") && !deep.includes("deep-demo-sample"), "deep telemetry must not synthesize measurements");
+assert.ok(css.includes(".strategic-dialog-actions button") && css.includes("min-height:48px"), "modal touch targets missing");
 console.log("EARTH_MONITOR_SMOKE_OK", JSON.stringify({ panels: panelIds.length, uniqueIds: idList.length, runtimeRefs: refs.length, externalAssets: 2 }));
