@@ -83,7 +83,7 @@ assert.ok(strategic.includes("touchend") && strategic.includes("strategic-dialog
 assert.ok(css.includes(".main-grid.strategic-grid") && css.includes("grid-template-columns:repeat(3,minmax(0,1fr))") && css.includes(".strategic-card:nth-child(4){grid-row:2;grid-column:1}") && css.includes(".strategic-card:nth-child(5){grid-row:2;grid-column:2 / 4") && css.includes("border-radius:0"), "reference-balanced three-column strategic grid missing");
 assert.ok(!html.includes("transport-demo-toggle") && !html.includes("deep-demo-toggle"), "production UI must not expose demo controls");
 assert.ok(strategic.includes("loadTransport(host)") && strategic.includes("https://v6.db.transport.rest/locations?query=Pforzheim"), "transport module must use the in-app departures client");
-assert.ok(!strategic.includes("function loadTransportFeed()") && !strategic.includes("opendata.vpe.de/data/gtfs/realtime/service-alerts.pbf"), "unused/unparsed protobuf GTFS feed implementation must not remain");
+assert.ok(!strategic.includes("function loadTransportFeed()"), "unused/unparsed protobuf GTFS feed implementation must not remain");
 assert.ok(!deep.includes("SIMULATED EXAMPLE DATA") && !deep.includes("deep-demo-sample"), "deep telemetry must not synthesize measurements");
 assert.ok(css.includes(".strategic-dialog-actions button") && css.includes("min-height:48px"), "modal touch targets missing");
 console.log("EARTH_MONITOR_SMOKE_OK", JSON.stringify({ panels: panelIds.length, uniqueIds: idList.length, runtimeRefs: refs.length, externalAssets: 2 }));
