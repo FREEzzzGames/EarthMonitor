@@ -292,6 +292,62 @@
   padding-top: 7px;
   line-height: 1.35;
 }
+
+/* RU dashboard polish: keep weather status clear of API links,
+   add breathing room to the deep-space caption, and compact Earth tabs. */
+.panel-weather .panel-body{
+  gap: 3px !important;
+  padding: 7px 6px 8px !important;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.panel-weather #weather-code{
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  margin-bottom: 3px;
+}
+.panel-weather #weather-time{
+  line-height: 1.25;
+  margin-top: 2px;
+}
+.panel-weather > .footer{
+  flex: 0 0 auto;
+  margin-top: 5px !important;
+  padding: 7px 6px 6px !important;
+  line-height: 1.35;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.panel-weather > .footer a{
+  display: inline-block;
+  margin: 1px 0;
+}
+.panel-stars > .footer{
+  padding: 7px 8px 8px !important;
+  line-height: 1.35;
+}
+.panel-earthdata .monitor-tabs{
+  gap: 2px;
+  padding: 3px 5px;
+}
+.panel-earthdata .monitor-tab{
+  min-width: 0;
+  padding: 4px 3px;
+  font-size: 9px;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+.panel-earthdata .monitor-view .metrics{
+  margin-top: 2px;
+}
+@media (orientation: landscape) and (max-height: 760px){
+  .panel-weather .panel-body{padding: 5px 5px 6px !important;gap: 2px !important}
+  .panel-weather > .footer{padding: 5px 5px 5px !important;margin-top: 3px !important;font-size: 8px}
+  .panel-stars > .footer{padding: 5px 6px 6px !important}
+  .panel-earthdata .monitor-tabs{padding: 2px 4px;gap: 2px}
+  .panel-earthdata .monitor-tab{font-size: 7px;padding: 3px 1px;letter-spacing: 0}
+}
+
 </style>
 </head>
 <body>
@@ -424,7 +480,7 @@ function showTerm(key,anchor){const item=glossary[key];if(!item)return;set("term
 
 const I18N={
 en:{refresh:"↻ REFRESH",help:"[?] HELP",landscape:"↔ LANDSCAPE",h1:"EARTH / LIVE STATUS",h2:"DEEP SPACE / STAR FIELD",h3:"WEATHER / ATMOSPHERE",h4:"ORBIT / ISS TELEMETRY",h5:"NASA / ISS LIVE VIDEO",h6:"GLOBAL EARTH MONITOR",h7:"MOON / CELESTIAL CYCLE",h8:"SATELLITE NETWORK",camTitle:"REGIONAL CAMERAS / 300 KM RADIUS",rotateCams:"↻ ROTATE CAMS",local:"LOCAL TEMP",quakes:"QUAKES M2.5+ / 24H",feels:"FEELS LIKE",wind:"WIND",pressure:"PRESSURE",humidity:"HUMIDITY",latitude:"LATITUDE",longitude:"LONGITUDE",velocity:"VELOCITY",period:"ORBIT PERIOD (EST.)",position:"POSITION API",nasa:"NASA LIVE",openVideo:"OPEN VIDEO ↗",earth:"06 EARTH",space:"09 SPACE",fires:"10 FIRES",aqi:"11 AQI",usgs:"USGS FEED",eonet:"NASA EONET",swpc:"NOAA SWPC",intro:"OPERATOR INITIALIZATION",next:"NEXT ↗",skip:"SKIP",helpTitle:"OPERATOR REFERENCE / HELP",close:"CLOSE ✕",runTour:"RUN INTRO TOUR ↗",connected:"CONNECTED",partial:"PARTIAL DATA",offline:"OFFLINE"},
-ru:{refresh:"↻ ОБНОВИТЬ",help:"[?] ПОМОЩЬ",landscape:"↔ ГОРИЗОНТАЛЬНО",h1:"ЗЕМЛЯ / ТЕКУЩИЙ СТАТУС",h2:"ДАЛЬНИЙ КОСМОС / ЗВЁЗДНОЕ ПОЛЕ",h3:"ПОГОДА / АТМОСФЕРА",h4:"ОРБИТА / ТЕЛЕМЕТРИЯ МКС",h5:"NASA / ВИДЕО МКС",h6:"МОНИТОР ЗЕМЛИ",h7:"ЛУНА / НЕБЕСНЫЙ ЦИКЛ",h8:"СЕТЬ СПУТНИКОВ",camTitle:"РЕГИОНАЛЬНЫЕ КАМЕРЫ / РАДИУС 300 КМ",rotateCams:"↻ СМЕНИТЬ КАМЕРЫ",local:"МЕСТНАЯ ТЕМП.",quakes:"ЗЕМЛЕТРЯСЕНИЯ M2.5+ / 24 Ч",feels:"ОЩУЩАЕТСЯ",wind:"ВЕТЕР",pressure:"ДАВЛЕНИЕ",humidity:"ВЛАЖНОСТЬ",latitude:"ШИРОТА",longitude:"ДОЛГОТА",velocity:"СКОРОСТЬ",period:"ПЕРИОД ОРБИТЫ (ОЦЕНКА)",position:"API ПОЗИЦИИ",nasa:"NASA LIVE",openVideo:"ОТКРЫТЬ ВИДЕО ↗",earth:"06 ЗЕМЛЯ",space:"09 КОСМОС",fires:"10 ПОЖАРЫ",aqi:"11 AQI",usgs:"ЛЕНТА USGS",eonet:"NASA EONET",swpc:"NOAA SWPC",intro:"ИНИЦИАЛИЗАЦИЯ ОПЕРАТОРА",next:"ДАЛЕЕ ↗",skip:"ПРОПУСТИТЬ",helpTitle:"СПРАВОЧНИК ОПЕРАТОРА",close:"ЗАКРЫТЬ ✕",runTour:"ЗАПУСТИТЬ ТУР ↗",connected:"ПОДКЛЮЧЕНО",partial:"ЧАСТИЧНЫЕ ДАННЫЕ",offline:"НЕТ СЕТИ"},
+ru:{refresh:"↻ ОБНОВИТЬ",help:"[?] ПОМОЩЬ",landscape:"↔ ГОРИЗОНТАЛЬНО",h1:"ЗЕМЛЯ / ТЕКУЩИЙ СТАТУС",h2:"ДАЛЬНИЙ КОСМОС / ЗВЁЗДНОЕ ПОЛЕ",h3:"ПОГОДА / АТМОСФЕРА",h4:"ОРБИТА / ТЕЛЕМЕТРИЯ МКС",h5:"NASA / ВИДЕО МКС",h6:"МОНИТОР ЗЕМЛИ",h7:"ЛУНА / НЕБЕСНЫЙ ЦИКЛ",h8:"СЕТЬ СПУТНИКОВ",camTitle:"РЕГИОНАЛЬНЫЕ КАМЕРЫ / РАДИУС 300 КМ",rotateCams:"[ РОТАЦИЯ КАМЕР ]",local:"МЕСТНАЯ ТЕМП.",quakes:"ЗЕМЛЕТРЯСЕНИЯ M2.5+ / 24 Ч",feels:"ОЩУЩАЕТСЯ",wind:"ВЕТЕР",pressure:"ДАВЛЕНИЕ",humidity:"ВЛАЖНОСТЬ",latitude:"ШИРОТА",longitude:"ДОЛГОТА",velocity:"СКОРОСТЬ",period:"ПЕРИОД ОРБИТЫ (ОЦЕНКА)",position:"API ПОЗИЦИИ",nasa:"NASA LIVE",openVideo:"ОТКРЫТЬ ВИДЕО ↗",earth:"06 ЗЕМЛЯ",space:"09 КОСМОС",fires:"10 ПОЖАРЫ",aqi:"11 AQI",usgs:"ЛЕНТА USGS",eonet:"NASA EONET",swpc:"NOAA SWPC",intro:"ИНИЦИАЛИЗАЦИЯ ОПЕРАТОРА",next:"ДАЛЕЕ ↗",skip:"ПРОПУСТИТЬ",helpTitle:"СПРАВОЧНИК ОПЕРАТОРА",close:"ЗАКРЫТЬ ✕",runTour:"ЗАПУСТИТЬ ТУР ↗",connected:"ПОДКЛЮЧЕНО",partial:"ЧАСТИЧНЫЕ ДАННЫЕ",offline:"НЕТ СЕТИ"},
 uk:{refresh:"↻ ОНОВИТИ",help:"[?] ДОВІДКА",landscape:"↔ ГОРИЗОНТАЛЬНО",h1:"ЗЕМЛЯ / ПОТОЧНИЙ СТАН",h2:"ДАЛЕКИЙ КОСМОС / ЗОРЯНЕ ПОЛЕ",h3:"ПОГОДА / АТМОСФЕРА",h4:"ОРБІТА / ТЕЛЕМЕТРІЯ МКС",h5:"NASA / ВІДЕО МКС",h6:"МОНІТОР ЗЕМЛІ",h7:"МІСЯЦЬ / НЕБЕСНИЙ ЦИКЛ",h8:"МЕРЕЖА КАМЕР / РАДІУС 300 КМ",camTitle:"РЕГІОНАЛЬНІ КАМЕРИ / РАДІУС 300 КМ",rotateCams:"↻ ЗМІНИТИ КАМЕРИ",local:"МІСЦЕВА ТЕМП.",quakes:"ЗЕМЛЕТРУСИ M2.5+ / 24 Г",feels:"ВІДЧУВАЄТЬСЯ",wind:"ВІТЕР",pressure:"ТИСК",humidity:"ВОЛОГІСТЬ",latitude:"ШИРОТА",longitude:"ДОВГОТА",velocity:"ШВИДКІСТЬ",period:"ПЕРІОД ОРБІТИ (ОЦІНКА)",position:"API ПОЗИЦІЇ",nasa:"NASA LIVE",openVideo:"ВІДКРИТИ ВІДЕО ↗",earth:"06 ЗЕМЛЯ",space:"09 КОСМОС",fires:"10 ПОЖЕЖІ",aqi:"11 AQI",usgs:"СТРІЧКА USGS",eonet:"NASA EONET",swpc:"NOAA SWPC",intro:"ІНІЦІАЛІЗАЦІЯ ОПЕРАТОРА",next:"ДАЛІ ↗",skip:"ПРОПУСТИТИ",helpTitle:"ДОВІДНИК ОПЕРАТОРА",close:"ЗАКРИТИ ✕",runTour:"ЗАПУСТИТИ ТУР ↗",connected:"ПІДКЛЮЧЕНО",partial:"ЧАСТКОВІ ДАНІ",offline:"НЕМАЄ МЕРЕЖІ"},
 de:{refresh:"↻ AKTUALISIEREN",help:"[?] HILFE",landscape:"↔ QUERFORMAT",h1:"ERDE / LIVE-STATUS",h2:"TIEFER WELTRAUM / STERNENFELD",h3:"WETTER / ATMOSPHÄRE",h4:"ORBIT / ISS-TELEMETRIE",h5:"NASA / ISS-LIVEVIDEO",h6:"GLOBALE ERDBEOBACHTUNG",h7:"MOND / HIMMELSZYKLUS",h8:"SATELLITENNETZWERK",camTitle:"REGIONALE KAMERAS / 300-KM-RADIUS",rotateCams:"↻ KAMERAS WECHSELN",local:"ORTSTEMPERATUR",quakes:"ERDBEBEN M2.5+ / 24 H",feels:"GEFÜHLT",wind:"WIND",pressure:"LUFTDRUCK",humidity:"LUFTFEUCHTIGKEIT",latitude:"BREITENGRAD",longitude:"LÄNGENGRAD",velocity:"GESCHWINDIGKEIT",period:"UMLAUFZEIT (CA.)",position:"POSITIONS-API",nasa:"NASA LIVE",openVideo:"VIDEO ÖFFNEN ↗",earth:"06 ERDE",space:"09 WELTRAUM",fires:"10 BRÄNDE",aqi:"11 AQI",usgs:"USGS-DATEN",eonet:"NASA EONET",swpc:"NOAA SWPC",intro:"OPERATOR-INITIALISIERUNG",next:"WEITER ↗",skip:"ÜBERSPRINGEN",helpTitle:"OPERATOR-HANDBUCH",close:"SCHLIESSEN ✕",runTour:"EINFÜHRUNG STARTEN ↗",connected:"VERBUNDEN",partial:"TEILWEISE DATEN",offline:"OFFLINE"}};
 function setLanguage(code,save=true){const lang=I18N[code]?code:"en",d=I18N[lang];document.documentElement.lang=lang;
