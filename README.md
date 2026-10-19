@@ -11,7 +11,7 @@
 
 ## Capacitor Android
 
-Android uses Capacitor's native bridge and packages a local copy of the dashboard in the APK. It no longer navigates to the hosted GitHub Pages URL at launch. The dashboard shell is therefore available offline; live feeds, remote imagery, video streams and camera sources still require internet.
+Android uses Capacitor and builds a local `www/` asset bundle, including the tactical module, into the APK. The current `capacitor.config.ts` sets `server.url` to the GitHub Pages deployment, so the installed app loads the hosted dashboard to receive web fixes without reinstalling. Internet is required for the dashboard shell in this configuration; offline startup is not guaranteed. Live feeds, remote imagery, video streams and camera sources also require internet.
 
 Requirements: Node.js 22, JDK 17, Android SDK, Gradle 8.13.
 
@@ -23,7 +23,7 @@ npx cap sync android
 gradle -p android assembleDebug --no-daemon
 ```
 
-Open Android Studio with `npx cap open android`. Capacitor config is in `capacitor.config.ts`; `scripts/build-web.mjs` stages `index.html` into `www/` before sync.
+Open Android Studio with `npx cap open android`. Capacitor config is in `capacitor.config.ts`; `scripts/build-web.mjs` stages `index.html`, `styles.css`, `app.js` and `js/touch-tactical.js` into `www/` before sync.
 
 The native Android project retains the App Widgets API implementation:
 - `android/app/src/main/java/com/freezzz/earthmonitor/EarthMonitorWidgetProvider.java`
