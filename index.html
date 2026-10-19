@@ -85,6 +85,25 @@
 <div class="anomaly-content" id="anomaly-content" aria-live="polite"><div class="anomaly-state"><strong>SPACE WEATHER / NOAA SWPC</strong><span id="anomaly-space-kp">KP —</span><p id="anomaly-space-note">Connecting to official space-weather feed…</p><a href="https://www.swpc.noaa.gov/" target="_blank" rel="noopener noreferrer">OFFICIAL SOURCE ↗</a></div></div>
 <div class="footer"><span id="anomaly-updated">PUBLIC SOURCES · WAITING</span><button type="button" id="anomaly-refresh">REFRESH ↻</button></div>
 </section>
+<section class="panel panel-global-streams" data-panel="global-streams">
+ <div class="panel-head"><span class="index">13</span><h2>GLOBAL STREAMS / LIVE FEEDS</h2><button class="expand" type="button" data-global-open aria-label="Open global streams">↗</button></div>
+ <div class="panel-body">
+  <div class="global-stream-select" role="group" aria-label="Select global data stream">
+   <button type="button" data-global-select="lightning" aria-pressed="true">LIGHTNING</button>
+   <button type="button" data-global-select="cyber" aria-pressed="false">CYBER THREATS</button>
+   <button type="button" data-global-select="aurora" aria-pressed="false">AURORA / SPACE WX</button>
+   <button type="button" data-global-select="marine" aria-pressed="false">MARITIME AIS</button>
+   <button type="button" data-global-select="energy" aria-pressed="false">EU ENERGY</button>
+  </div>
+  <div class="global-stream-summary" aria-live="polite">
+   <div class="kicker" id="global-stream-name">LIGHTNING ACTIVITY</div>
+   <strong id="global-stream-status">CONNECTING TO SOURCE…</strong>
+   <p id="global-stream-description">LightningMaps is an external visualization. A verified public global Blitzortung API is not assumed.</p>
+   <a id="global-stream-source" href="https://www.lightningmaps.org/" target="_blank" rel="noopener noreferrer">OPEN SOURCE ↗</a>
+  </div>
+ </div>
+ <div class="footer"><span>PUBLIC FEEDS · NO CLIENT API KEYS</span><button type="button" data-global-open>OPEN TELEMETRY ↗</button></div>
+</section>
 <section class="panel panel-cameras" data-panel="cameras" data-panel-number="12">
   <div class="panel-head"><span class="index">10</span><h2>REGIONAL CAMERAS / 300 KM RADIUS</h2><button id="rotate-cams" type="button" title="Rotate active cameras">↻ ROTATE CAMS</button></div>
   <div class="camera-grid" id="camera-grid" aria-live="polite"></div>
@@ -101,8 +120,30 @@
 </section><dialog class="details-dialog help-dialog" id="operator-help"><div class="dialog-head"><h2>OPERATOR REFERENCE / HELP</h2><button type="button" id="help-close">CLOSE ✕</button></div><div class="dialog-body" id="help-content"></div><div class="dialog-actions"><button type="button" id="help-start-tour">RUN INTRO TOUR ↗</button></div></dialog>
 <div class="intro-overlay" id="intro-overlay" hidden><section class="intro-card" role="dialog" aria-modal="true" aria-labelledby="intro-title"><div class="intro-kicker">PLANET EARTH CONTROL DECK · FIRST BOOT</div><h2 id="intro-title">OPERATOR INITIALIZATION</h2><p id="intro-copy">Initialize your operator view.</p><div class="intro-progress" id="intro-progress">STEP 01 / 04</div><div class="intro-actions"><button type="button" id="intro-skip">SKIP</button><button type="button" id="intro-next">NEXT ↗</button></div></section></div>
 <div class="term-popover" id="term-popover" role="status" hidden><button type="button" id="term-close" aria-label="Close explanation">×</button><strong id="term-title"></strong><p id="term-copy"></p></div>
+<dialog class="details-dialog global-stream-dialog" id="global-stream-dialog" aria-labelledby="global-stream-dialog-title">
+ <div class="dialog-head"><h2 id="global-stream-dialog-title">GLOBAL STREAMS / TELEMETRY SELECTOR</h2><button type="button" data-global-close>CLOSE ✕</button></div>
+ <div class="global-stream-dialog-body">
+  <nav class="global-stream-tabs" aria-label="Global telemetry sources">
+   <button type="button" data-global-select="lightning" aria-pressed="true">01 LIGHTNING</button>
+   <button type="button" data-global-select="cyber" aria-pressed="false">02 CYBER</button>
+   <button type="button" data-global-select="aurora" aria-pressed="false">03 AURORA</button>
+   <button type="button" data-global-select="marine" aria-pressed="false">04 MARITIME</button>
+   <button type="button" data-global-select="energy" aria-pressed="false">05 ENERGY</button>
+  </nav>
+  <section class="global-stream-detail" aria-live="polite">
+   <div class="kicker" id="global-detail-kicker">SOURCE STATUS</div><h3 id="global-detail-title">LIGHTNING ACTIVITY</h3>
+   <div id="global-detail-status" class="global-feed-status">CONNECTING…</div>
+   <p id="global-detail-description"></p>
+   <div id="global-detail-data" class="global-detail-data"></div>
+   <div id="global-detail-map" class="global-detail-map"></div>
+   <a id="global-detail-source" href="https://www.lightningmaps.org/" target="_blank" rel="noopener noreferrer">OPEN OFFICIAL SOURCE ↗</a>
+  </section>
+  <div class="global-dialog-footer"><span id="global-detail-updated">NO DATA LOADED</span><button type="button" data-global-refresh>REFRESH FEED ↻</button></div>
+ </div>
+</dialog>
 <dialog class="details-dialog" id="details"><div class="dialog-head"><h2 id="dialog-title">PANEL DETAILS</h2><button id="dialog-close" type="button">CLOSE ✕</button></div><div class="dialog-body" id="dialog-body"></div><div class="dialog-actions"><button id="dialog-refresh" type="button">REFRESH SOURCES ↻</button></div></dialog>
 <script src="./js/touch-tactical.js" defer></script>
+<script src="./js/global-streams.js" defer></script>
 <script src="./app.js" defer></script>
 </body>
 </html>
