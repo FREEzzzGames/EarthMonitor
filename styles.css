@@ -418,3 +418,56 @@
 .anomaly-state span{font-family:monospace}
 .anomaly-state .anomaly-warn{color:#ff5656!important}
 .anomaly-state .anomaly-good{color:#ddd!important}
+
+/* Main Deck information architecture — ten primary cards, advanced modules remain in drill-down */
+:root{--bg:#000;--panel:#080808;--panel2:#080808;--line:#262626}
+html,body,#deck{background:#000}
+.panel{border-radius:0!important;background:#080808;border:1px solid #262626;min-width:0}
+.panel-stars,.panel-anomalies{display:none!important}
+.grid#monitor-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:6px;overflow:hidden;min-height:0}
+.panel-globe{grid-column:1;grid-row:1}
+.panel-video{grid-column:2;grid-row:1;min-height:0}
+.panel-weather{grid-column:3;grid-row:1;min-height:0}
+.panel-orbit{grid-column:4;grid-row:1;min-height:0}
+.panel-earthdata{grid-column:5;grid-row:1;min-height:0}
+.panel-radar{grid-column:1;grid-row:2;min-height:0}
+.panel-spaceweather{grid-column:2;grid-row:2;min-height:0}
+.panel-moon{grid-column:3;grid-row:2;min-height:0}
+.panel-satellites{display:block!important;grid-column:4;grid-row:2;min-height:0}
+.panel-cameras{grid-column:5;grid-row:2;min-height:0}
+.panel-earthdata .monitor-tabs{display:none!important}
+.panel-earthdata .monitor-view:not([data-monitor-view="earthdata"]){display:none!important}
+.panel-earthdata .monitor-view[data-monitor-view="earthdata"]{display:block!important}
+.panel-earthdata .monitor-view[data-monitor-view="earthdata"] .panel-body{padding-top:8px}
+.panel-earthdata .monitor-view[data-monitor-view="earthdata"] .metrics{grid-template-columns:1fr}
+.panel-earthdata .monitor-view[data-monitor-view="earthdata"] .row:nth-of-type(n+3){display:none}
+.panel-cameras .camera-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+.panel-cameras .camera-card:nth-child(n+5){display:none}
+.panel-head h2{font-size:clamp(10px,.85vw,13px);overflow-wrap:anywhere}
+.panel .big{font-size:clamp(18px,1.8vw,29px);overflow-wrap:anywhere}
+.panel .medium{font-size:clamp(10px,.9vw,13px)}
+.panel .small,.panel .row,.panel .kicker{font-size:clamp(9px,.72vw,11px)}
+.simple-explanation{display:none;color:#aaa;font-size:clamp(10px,.8vw,12px);line-height:1.45;margin:8px 0}
+body.simple-mode .simple-explanation{display:block}
+body.simple-mode .technical-detail{display:none!important}
+body.expert-mode .simple-explanation{display:none}
+#complexity-toggle[aria-pressed="true"]{border-color:#ddd;color:#fff}
+.critical-ticker{order:2;margin-top:4px;border-radius:0;background:#080808;border-color:#262626;min-height:24px}
+.critical-ticker .ticker-tag{color:#ff6262}
+#monitor-grid{order:1}
+#deck{display:flex;flex-direction:column}
+.footbar{order:3}
+@media(max-width:1000px){
+ .grid#monitor-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto;overflow:visible;flex:none}
+ .panel-globe,.panel-video,.panel-weather,.panel-orbit,.panel-earthdata,.panel-radar,.panel-spaceweather,.panel-moon,.panel-satellites,.panel-cameras{grid-column:auto;grid-row:auto;min-height:220px}
+ .panel-video{grid-column:span 2;min-height:260px}
+ .panel-cameras{grid-column:span 2;min-height:260px}
+ .panel-cameras .camera-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+ .grid#monitor-grid{grid-template-columns:minmax(0,1fr)}
+ .panel-video,.panel-cameras{grid-column:auto}
+ .masthead{align-items:flex-start}
+ .actions{flex-wrap:wrap}
+ .critical-ticker{font-size:9px}
+}
