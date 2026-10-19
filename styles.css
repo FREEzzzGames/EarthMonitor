@@ -336,7 +336,7 @@
 .panel-weather{grid-column:5;grid-row:1}
 .panel-video{grid-column:2/4;grid-row:1}
 .panel-orbit{grid-column:1;grid-row:2}
-.panel-earthdata{grid-column:2/6;grid-row:2}
+.panel-earthdata{grid-column:2/4;grid-row:2}
 .panel-cameras{grid-column:1/6;grid-row:3}
 .deck .panel-earthdata .monitor-tabs,.deck .panel-earthdata .monitor-view .footer,
 .deck .panel-weather>.footer,.deck .panel-orbit>.footer,.deck .panel-globe>.footer{display:none!important}
