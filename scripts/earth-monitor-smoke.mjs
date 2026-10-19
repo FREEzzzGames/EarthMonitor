@@ -74,6 +74,9 @@ const deep = await readFile(new URL("../js/deep-telemetry.js", import.meta.url),
 new vm.Script(deep, { filename: "js/deep-telemetry.js" });
 for (const endpoint of ["erddap.ifremer.fr/erddap/tabledap/ArgoFloats.json", "www.ndbc.noaa.gov/data/realtime2/21415.dart", "EARTHMONITOR_DEEP_CONFIG", "eyes.nasa.gov/dsn/dsn.html", "celestrak.org/NORAD/elements/", "submarinecablemap.com", "app.electricitymaps.com"]) assert.ok(deep.includes(endpoint), "deep feed source/config missing: "+endpoint);
 assert.ok(deep.includes("FEED TEMPORARILY UNAVAILABLE - USING CACHE") && deep.includes("AbortController"), "deep feed cache fallback or cancellation missing");
+assert.ok(deep.includes("requestId!==state.requestId") && deep.includes("CACHED · SOURCE UNAVAILABLE") && deep.includes("ERDDAP response has no table rows"), "deep telemetry must prevent stale view races and validate provider payloads");
+assert.ok(globalStreams.includes('if(state.active==="cyber")renderData') && globalStreams.includes('if(state.active===key)renderData') && globalStreams.includes('"LIVE SOURCE UNAVAILABLE"'), "global telemetry must prevent stale view races and distinguish unavailable from cached");
+assert.ok(niche.includes("requestId!==state.requestId") && niche.includes('"LIVE SOURCE UNAVAILABLE"'), "niche telemetry must prevent stale view races and report unavailable sources accurately");
 assert.ok(css.includes(".deep-source-select button") && css.includes("min-height:48px") && css.includes("border-radius:0"), "deep telemetry touch-first styles missing");
 const strategic = await readFile(new URL("../js/strategic-dashboard.js", import.meta.url), "utf8");
 new vm.Script(strategic, { filename: "js/strategic-dashboard.js" });
