@@ -86,14 +86,14 @@ async function load(key){
   else{
    const config=window.EARTHMONITOR_GLOBAL_STREAM_CONFIG?.[key];
    if(config?.url){const data=await fetchJson(config.url,controller.signal);if(!data||typeof data!=="object")throw new Error("Unexpected proxy response");writeCache(key,data);if(state.active===key)renderData(key,data,false,Date.now());}
-   else {const cached=readCache(key);if(cached)paintCache(key,cached);else{paintStatus("[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE","warning");setText("global-stream-status","[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE");setText("global-detail-updated","NO CACHED RECORD · PROVIDER CONFIGURATION REQUIRED");const host=$("global-detail-data");if(host){host.append(addMetric("LIVE DATA","Unavailable"));host.append(addMetric("REQUIRED","Configure a same-origin backend proxy"));}}}
+   else {const cached=readCache(key);if(cached)paintCache(key,cached);else{paintStatus("LIVE SOURCE UNAVAILABLE","warning");setText("global-stream-status","LIVE SOURCE UNAVAILABLE");setText("global-detail-updated","NO CACHED RECORD · PROVIDER CONFIGURATION REQUIRED");const host=$("global-detail-data");if(host){host.append(addMetric("LIVE DATA","Unavailable"));host.append(addMetric("REQUIRED","Configure a same-origin backend proxy"));}}}
   }
  }catch(error){
   if(state.active!==key)return;
   if(error?.name==="AbortError")setText("global-detail-updated","REQUEST TIMEOUT / CANCELLED");
   const cached=readCache(key);
   if(cached)paintCache(key,cached);
-  else {paintStatus("[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE","warning");setText("global-stream-status","[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE");setText("global-detail-updated","NO CACHE AVAILABLE · "+(error?.message||"SOURCE UNAVAILABLE"));const host=$("global-detail-data");if(host){host.replaceChildren();host.append(addMetric("DATA STATE","Unavailable"));host.append(addMetric("REASON",(error?.message||"Feed unavailable").slice(0,120)));}}
+  else {paintStatus("LIVE SOURCE UNAVAILABLE","warning");setText("global-stream-status","LIVE SOURCE UNAVAILABLE");setText("global-detail-updated","NO CACHE AVAILABLE · "+(error?.message||"SOURCE UNAVAILABLE"));const host=$("global-detail-data");if(host){host.replaceChildren();host.append(addMetric("DATA STATE","Unavailable"));host.append(addMetric("REASON",(error?.message||"Feed unavailable").slice(0,120)));}}
  }finally{clearTimeout(timer)}
 }
 function openDialog(key=state.active){const d=$("global-stream-dialog");if(d&&!d.open)d.showModal();select(key)}
