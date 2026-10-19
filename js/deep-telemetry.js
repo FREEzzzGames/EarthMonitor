@@ -8,7 +8,7 @@ const FEEDS={
  cables:{title:"SUBSEA CABLE INFRASTRUCTURE",url:"https://www.submarinecablemap.com/",description:"Subsea cable maps are public reference maps, not a universal live cable health API. No cable outage status is fabricated; a licensed or operator feed is required for live status."},
  carbon:{title:"GRID CARBON INTENSITY",url:"https://app.electricitymaps.com/",description:"Electricity Maps offers carbon intensity and generation mix, but API access and geographic coverage depend on provider authorization. Use a server-side proxy for tokens."}
 };
-const state={active:"dsn",controller:null,demo:false};
+const state={active:"dsn",controller:null};
 function text(id,v){const n=$(id);if(n)n.textContent=v}
 function link(id,v){const n=$(id);if(n)n.href=v}
 function cacheGet(k){try{const x=JSON.parse(localStorage.getItem(PREFIX+k)||"null");return x&&x.savedAt&&x.data!==undefined?x:null}catch{return null}}
@@ -52,16 +52,15 @@ async function load(k){
    const r=await fetch(url,{cache:"no-store",signal:ctrl.signal});if(!r.ok)throw new Error("HTTP "+r.status);const raw=await r.text();const lines=raw.trim().split(/\r?\n/);data=lines.slice(0,16).map(line=>line.trim().split(/\s+/));if(lines.length<2)throw new Error("No DART observations");
   }else data=await getJson(url,ctrl.signal);
   if(!data||(typeof data!=="object"&& !Array.isArray(data)))throw new Error("Unexpected provider response");
-  cacheSet(k,data);render(k,data,false,Date.now());renderDemoState();
+  cacheSet(k,data);render(k,data,false,Date.now());
  }catch(e){
   const cached=cacheGet(k);
-  if(cached){render(k,cached.data,true,cached.savedAt);renderDemoState();}
+  if(cached)render(k,cached.data,true,cached.savedAt);
   else{status("[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE","warning");text("deep-summary-status","[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE");text("deep-detail-updated","NO CACHE AVAILABLE · "+(e?.message||"source unavailable"));const host=$("deep-detail-data");host?.replaceChildren();host?.append(metric("DATA STATE","Unavailable"),metric("REASON",(e?.message||"feed unavailable").slice(0,150)))}
  }finally{clearTimeout(timeout)}
 }
 function open(){const d=$("deep-telemetry-dialog");if(d&&!d.open)d.showModal();load(state.active)}
-function renderDemoState(){const b=$("deep-demo-toggle"),st=$("deep-demo-status");if(b){b.setAttribute("aria-pressed",String(state.demo));b.textContent=state.demo?"DISABLE DEMO / SIMULATION MODE":"ENABLE DEMO / SIMULATION MODE"}if(st)st.textContent=state.demo?"SIMULATION ACTIVE · ILLUSTRATIVE ONLY":"LIVE PROVIDER DATA ONLY";const host=$("deep-detail-data");if(!host)return;let note=$("deep-demo-notice"),sample=$("deep-demo-sample");if(!state.demo){note?.remove();sample?.remove();return}if(!note){note=document.createElement("div");note.id="deep-demo-notice";note.className="deep-feed-status";host.prepend(note)}note.textContent="SIMULATED EXAMPLE DATA · NOT REAL TELEMETRY · DO NOT USE FOR OPERATIONAL DECISIONS";if(!sample){sample=document.createElement("div");sample.id="deep-demo-sample";sample.className="deep-demo-sample";host.append(sample)}sample.replaceChildren();const data={dsn:[["Demo antenna","ANT-01"],["Demo link state","NOMINAL (SIMULATED)"]],orbit:[["Demo object","SIM-0001"],["Demo altitude","420 km (SIMULATED)"]],argo:[["Demo profiles","12 (SIMULATED)"],["Demo sea temperature","18.4 °C (SIMULATED)"]],dart:[["Demo buoy","SIM-DART-01"],["Demo wave height","1.2 m (SIMULATED)"]],cables:[["Demo cable links","3 (SIMULATED)"],["Demo outage state","UNKNOWN — NOT LIVE"]],carbon:[["Demo carbon intensity","245 gCO₂e/kWh (SIMULATED)"],["Demo grid state","ILLUSTRATIVE ONLY"]]}[state.active]||[];for(const [k,v] of data)sample.append(metric(k,v))}
-$("deep-demo-toggle")?.addEventListener("click",()=>{state.demo=!state.demo;renderDemoState()});
+
 document.querySelectorAll("[data-deep-select]").forEach(b=>b.addEventListener("click",()=>load(b.dataset.deepSelect)));
 document.querySelectorAll("[data-deep-open]").forEach(b=>b.addEventListener("click",open));
 document.querySelectorAll("[data-deep-close]").forEach(b=>b.addEventListener("click",()=>$("deep-telemetry-dialog")?.close()));
