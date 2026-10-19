@@ -63,7 +63,7 @@ async function loadCyber(){
  if(!data||typeof data!=="object")throw new Error("Unexpected URLhaus response");
  const entries=Array.isArray(data)?data:(Array.isArray(data?.urls)?data.urls:(Array.isArray(data?.data)?data.data:Object.values(data).filter(x=>x&&typeof x==="object")));
  if(!entries.length)throw new Error("Empty URLhaus response");
- writeCache("cyber",entries);renderData("cyber",entries,false,Date.now());
+ writeCache("cyber",entries);if(state.active==="cyber")renderData("cyber",entries,false,Date.now());
 }
 async function loadAurora(){
  const [aurora,solar]=await Promise.all([
@@ -73,7 +73,7 @@ async function loadAurora(){
  if(!Array.isArray(aurora?.coordinates))throw new Error("Unexpected NOAA OVATION response");
  let solarWind=[];
  if(Array.isArray(solar)&&solar.length>1){const head=solar[0];solarWind=solar.slice(1).map(row=>Object.fromEntries(head.map((k,i)=>[k,row[i]]))).filter(x=>x.speed&&Number.isFinite(Number(x.speed))).slice(-12)}
- const data={...aurora,solarWind};writeCache("aurora",data);renderData("aurora",data,false,Date.now());
+ const data={...aurora,solarWind};writeCache("aurora",data);if(state.active==="aurora")renderData("aurora",data,false,Date.now());
 }
 async function load(key){
  state.controllers.get(key)?.abort();const controller=new AbortController();state.controllers.set(key,controller);
@@ -85,10 +85,11 @@ async function load(key){
   else if(key==="lightning"){paintStatus("EXTERNAL LIVE MAP · NO PUBLIC API CLAIMED","neutral");setText("global-stream-status","LIVE MAP LINK · NOT AN API STREAM");setText("global-detail-updated","EXTERNAL VISUALIZATION · "+safeDate(Date.now()));}
   else{
    const config=window.EARTHMONITOR_GLOBAL_STREAM_CONFIG?.[key];
-   if(config?.url){const data=await fetchJson(config.url,controller.signal);if(!data||typeof data!=="object")throw new Error("Unexpected proxy response");writeCache(key,data);renderData(key,data,false,Date.now());}
+   if(config?.url){const data=await fetchJson(config.url,controller.signal);if(!data||typeof data!=="object")throw new Error("Unexpected proxy response");writeCache(key,data);if(state.active===key)renderData(key,data,false,Date.now());}
    else {const cached=readCache(key);if(cached)paintCache(key,cached);else{paintStatus("[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE","warning");setText("global-stream-status","[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE");setText("global-detail-updated","NO CACHED RECORD · PROVIDER CONFIGURATION REQUIRED");const host=$("global-detail-data");if(host){host.append(addMetric("LIVE DATA","Unavailable"));host.append(addMetric("REQUIRED","Configure a same-origin backend proxy"));}}}
   }
  }catch(error){
+  if(state.active!==key)return;
   if(error?.name==="AbortError")setText("global-detail-updated","REQUEST TIMEOUT / CANCELLED");
   const cached=readCache(key);
   if(cached)paintCache(key,cached);
