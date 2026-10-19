@@ -195,3 +195,112 @@ document.querySelectorAll(".panel-head h2").forEach(heading=>{
  heading.addEventListener("click",open);
  heading.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();open();}});
 });
+
+/* AIRSPACE RADAR — OpenSky public state vectors with deterministic regional fallback. */
+(()=>{
+ const CENTER={lat:48.8907,lon:8.6987},RADIUS_KM=120;
+ const $air=id=>document.getElementById(id);
+ const canvas=$air("air-radar-canvas");
+ if(!canvas)return;
+ const ctx=canvas.getContext("2d");
+ let aircraft=[],usingFallback=false,lastFetch=0,fetching=false,resizeObserver;
+ const names=["DLH4KM","EWG7PX","CFG2LA","SWR3TN","BCS8MD","AUA6RJ","TUI5VP","RYR1QZ"];
+ const toRad=v=>v*Math.PI/180;
+ function distanceKm(a,b){const p1=toRad(a.lat),p2=toRad(b.lat),dp=p2-p1,dl=toRad(b.lon-a.lon);const q=Math.sin(dp/2)**2+Math.cos(p1)*Math.cos(p2)*Math.sin(dl/2)**2;return 6371*2*Math.atan2(Math.sqrt(q),Math.sqrt(1-q));}
+ function bearingDeg(a,b){const p1=toRad(a.lat),p2=toRad(b.lat),dl=toRad(b.lon-a.lon);return (Math.atan2(Math.sin(dl)*Math.cos(p2),Math.cos(p1)*Math.sin(p2)-Math.sin(p1)*Math.cos(p2)*Math.cos(dl))*180/Math.PI+360)%360;}
+ function fmtAlt(m){return m==null?"ALT —":Math.round(m/0.3048).toLocaleString()+" FT";}
+ function fmtSpeed(ms){return ms==null?"GS —":Math.round(ms*1.94384)+" KT";}
+ function fallbackTraffic(){
+  const now=Date.now()/1000;
+  return names.slice(0,7).map((callsign,i)=>{
+   const phase=now/900+i*1.71,range=18+(i*19)%88,angle=phase% (Math.PI*2);
+   const lat=CENTER.lat+Math.cos(angle)*range/111,lon=CENTER.lon+Math.sin(angle)*range/(111*Math.cos(toRad(CENTER.lat)));
+   return {icao24:"sim"+i,callsign,lat,lon,altitude:6500+(i*1370)%6000,velocity:165+(i*21)%105,heading:(angle*180/Math.PI+90)%360,onGround:false,simulated:true};
+  });
+ }
+ function draw(){
+  const rect=canvas.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2),w=Math.max(1,rect.width),h=Math.max(1,rect.height);
+  if(canvas.width!==Math.round(w*dpr)||canvas.height!==Math.round(h*dpr)){canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);}
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);ctx.fillStyle="#000";ctx.fillRect(0,0,w,h);
+  const cx=w/2,cy=h/2,r=Math.max(12,Math.min(w,h)*.43);
+  ctx.strokeStyle="#333";ctx.lineWidth=1;
+  for(const f of [.33,.66,1]){ctx.beginPath();ctx.arc(cx,cy,r*f,0,Math.PI*2);ctx.stroke();}
+  ctx.beginPath();ctx.moveTo(cx-r,cy);ctx.lineTo(cx+r,cy);ctx.moveTo(cx,cy-r);ctx.lineTo(cx,cy+r);ctx.stroke();
+  ctx.fillStyle="#777";ctx.font="9px monospace";ctx.fillText("N",cx-3,cy-r-4);ctx.fillText("120 KM",cx+r-35,cy+12);
+  const sweep=(Date.now()/500)% (Math.PI*2);
+  ctx.strokeStyle="#777";ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.sin(sweep)*r,cy-Math.cos(sweep)*r);ctx.stroke();
+  aircraft.forEach(a=>{
+   const range=distanceKm(CENTER,a);if(range>RADIUS_KM)return;
+   const angle=toRad(bearingDeg(CENTER,a)),rr=(range/RADIUS_KM)*r,x=cx+Math.sin(angle)*rr,y=cy-Math.cos(angle)*rr;
+   ctx.fillStyle=a.simulated?"#777":"#fff";ctx.fillRect(x-2,y-2,4,4);
+  });
+  ctx.fillStyle="#aaa";ctx.font="9px monospace";ctx.fillText(usingFallback?"SIMULATED TRAFFIC":"OPENSKY STATE VECTORS",6,h-7);
+ }
+ function renderList(){
+  $air("air-count").textContent=String(aircraft.length).padStart(2,"0");
+  const nearest=aircraft.filter(a=>Number.isFinite(a.lat)&&Number.isFinite(a.lon)).map(a=>({...a,distance:distanceKm(CENTER,a)})).sort((a,b)=>a.distance-b.distance)[0];
+  if(nearest){$air("air-nearest").textContent=(nearest.callsign||nearest.icao24||"UNKNOWN").trim().slice(0,12);$air("air-nearest-meta").textContent=Math.round(nearest.distance)+" KM · "+fmtAlt(nearest.altitude)+" · "+fmtSpeed(nearest.velocity);}
+  else{$air("air-nearest").textContent="NO CONTACT";$air("air-nearest-meta").textContent="NO AIRCRAFT IN REGION";}
+  $air("air-source-status").textContent=usingFallback?"SIMULATION / API UNAVAILABLE":"OPENSKY / PUBLIC DATA";
+  $air("air-updated").textContent=new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  draw();
+ }
+ function renderTable(){
+  const table=document.createElement("table");table.className="aircraft-table";
+  table.innerHTML="<thead><tr><th>CALLSIGN / ICAO</th><th>RANGE</th><th>ALTITUDE</th><th>GROUND SPEED</th><th>HEADING</th><th>LAT / LON</th><th>MODE</th></tr></thead>";
+  const tbody=document.createElement("tbody");
+  aircraft.map(a=>({...a,distance:distanceKm(CENTER,a)})).sort((a,b)=>a.distance-b.distance).forEach(a=>{
+   const tr=document.createElement("tr");
+   [((a.callsign||"").trim()||a.icao24||"UNKNOWN"),Math.round(a.distance)+" km",fmtAlt(a.altitude),fmtSpeed(a.velocity),a.heading==null?"—":Math.round(a.heading)+"°",a.lat.toFixed(3)+" / "+a.lon.toFixed(3),a.simulated?"SIM":"LIVE"].forEach(v=>{const td=document.createElement("td");td.textContent=v;tr.append(td);});
+   tbody.append(tr);
+  });
+  table.append(tbody);return table;
+ }
+ function renderDrilldown(){
+  const body=$air("dialog-body");body.replaceChildren();
+  const note=document.createElement("p");note.className="muted";note.textContent="AIRSPACE RADAR · CENTER PFORZHEIM, DE · 120 KM RADIUS · "+(usingFallback?"SIMULATED FALLBACK — NOT LIVE FLIGHT DATA":"PUBLIC OPENSKY STATE VECTORS");body.append(note);
+  const wrap=document.createElement("div");wrap.className="air-drill-grid";
+  const plot=document.createElement("div");plot.className="air-drill-plot";const large=document.createElement("canvas");large.id="air-radar-large";large.setAttribute("aria-label","Expanded airspace radar");plot.append(large);
+  const list=document.createElement("div");list.className="air-drill-table-wrap";list.append(renderTable());wrap.append(plot,list);body.append(wrap);
+  const bigCtx=large.getContext("2d");
+  const drawLarge=()=>{
+   const r=large.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);if(!r.width||!r.height)return;
+   large.width=Math.round(r.width*dpr);large.height=Math.round(r.height*dpr);bigCtx.setTransform(dpr,0,0,dpr,0,0);
+   bigCtx.fillStyle="#000";bigCtx.fillRect(0,0,r.width,r.height);const cx=r.width/2,cy=r.height/2,rad=Math.max(10,Math.min(r.width,r.height)*.42);
+   bigCtx.strokeStyle="#333";for(const f of [.25,.5,.75,1]){bigCtx.beginPath();bigCtx.arc(cx,cy,rad*f,0,Math.PI*2);bigCtx.stroke();}
+   bigCtx.beginPath();bigCtx.moveTo(cx-rad,cy);bigCtx.lineTo(cx+rad,cy);bigCtx.moveTo(cx,cy-rad);bigCtx.lineTo(cx,cy+rad);bigCtx.stroke();
+   aircraft.forEach(a=>{const km=distanceKm(CENTER,a);if(km>RADIUS_KM)return;const b=toRad(bearingDeg(CENTER,a)),rr=km/RADIUS_KM*rad;bigCtx.fillStyle=a.simulated?"#888":"#fff";bigCtx.fillRect(cx+Math.sin(b)*rr-3,cy-Math.cos(b)*rr-3,6,6);});
+  };
+  requestAnimationFrame(drawLarge);
+ }
+ async function refreshAirspaceRadar(){
+  if(fetching||Date.now()-lastFetch<25000)return;fetching=true;lastFetch=Date.now();
+  const bbox={lamin:CENTER.lat-RADIUS_KM/111,lamax:CENTER.lat+RADIUS_KM/111,lomin:CENTER.lon-RADIUS_KM/(111*Math.cos(toRad(CENTER.lat))),lomax:CENTER.lon+RADIUS_KM/(111*Math.cos(toRad(CENTER.lat)))};
+  try{
+   const qs=new URLSearchParams(Object.entries(bbox).map(([k,v])=>[k,v.toFixed(3)]));
+   const response=await fetch("https://opensky-network.org/api/states/all?"+qs,{headers:{Accept:"application/json"},cache:"no-store",signal:AbortSignal.timeout(9000)});
+   if(!response.ok)throw new Error("OpenSky HTTP "+response.status);
+   const data=await response.json();
+   if(!Array.isArray(data.states))throw new Error("OpenSky state vector response missing");
+   aircraft=data.states.map(s=>({icao24:s[0],callsign:String(s[1]||"").trim(),lon:s[5],lat:s[6],altitude:s[7]??s[13],onGround:s[8],velocity:s[9],heading:s[10],simulated:false})).filter(a=>Number.isFinite(a.lat)&&Number.isFinite(a.lon)&&distanceKm(CENTER,a)<=RADIUS_KM);
+   usingFallback=false;
+  }catch(error){aircraft=fallbackTraffic();usingFallback=true;}
+  finally{fetching=false;renderList();const dlg=$air("details");if(dlg?.open&&dlg.dataset.panel==="radar")renderDrilldown();}
+ }
+ const observer=typeof ResizeObserver==="function"?new ResizeObserver(draw):null;observer?.observe(canvas);
+ document.querySelectorAll('[data-expand="radar"]').forEach(b=>b.addEventListener("click",()=>openDetails("radar")));
+ const heading=document.querySelector('[data-panel="radar"] .panel-head h2');
+ if(heading){heading.tabIndex=0;heading.setAttribute("role","button");heading.addEventListener("click",()=>openDetails("radar"));heading.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openDetails("radar");}});}
+ const originalOpenDetails=window.openDetails;
+ // The existing openDetails function is global-scope lexical; wrap through the expand button path.
+ document.addEventListener("click",e=>{const b=e.target.closest('[data-expand="radar"]');if(b)setTimeout(renderDrilldown,0);});
+ const dialog=$air("details"),close=$air("dialog-close");
+ close?.addEventListener("click",()=>{if(dialog?.open&&dialog.dataset.panel==="radar")dialog.close();});
+ dialog?.addEventListener("close",()=>{if(dialog.dataset.panel==="radar")dialog.dataset.panel="";});
+ // Replace panelDetails lookup via a narrowly scoped wrapper, preserving all existing panel content.
+ const priorPanelDetails=panelDetails;
+ panelDetails=function(id){if(id==="radar")return "AIRSPACE RADAR · PFORZHEIM · 120 KM RADIUS\nOpenSky public state-vector API; simulation is shown explicitly when the public feed is blocked or unavailable.";return priorPanelDetails(id);};
+ const priorOpenDetails=openDetails;
+ openDetails=function(id){priorOpenDetails(id);if(id==="radar")renderDrilldown();};
+ refreshAirspaceRadar();setInterval(refreshAirspaceRadar,60000);
+})();
