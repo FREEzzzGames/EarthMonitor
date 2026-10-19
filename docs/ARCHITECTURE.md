@@ -40,10 +40,10 @@ GitHub Actions → validate → web deploy / Android build
 | Satellites | CelesTrak | Public orbital catalogue; elements are not precise live tracking |
 | Airspace | OpenSky public state vectors | Availability/rate limits may apply; fallback must be labelled |
 | Regional cameras | Public regional camera pages/feeds | Provider embedding and availability may vary |
-| Lightning | LightningMaps external live map | No in-app strike count is fabricated when a stable open API is not configured |
+| Lightning | LightningMaps external live map | External map only; no in-app strike count is fabricated without a stable supported feed |
 | Volcanoes | NASA EONET open events | Event catalogue, not official volcano alert levels |
-| Hydro | PEGELONLINE station metadata | Station directory only unless live measurement retrieval is separately confirmed |
-| Cyber / internet | Cloudflare Radar dashboard | Some API routes require credentials; no secrets are bundled in the browser |
+| Hydro | PEGELONLINE stations with current measurements + official LUBW Enz/Nagold gauge pages | Current values appear only where PEGELONLINE publishes them; local LUBW pages are linked separately because coverage is not interchangeable |
+| Cyber / internet | Cloudflare Radar dashboard; Cloudflare DNS-over-HTTPS for DNS lookups | Radar remains external because some API routes require credentials; DoH timing is not root-server ICMP latency |
 
 ## 5. Reliability rules
 
