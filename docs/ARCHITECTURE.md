@@ -10,7 +10,8 @@ EarthMonitor is a static-first observation dashboard. The browser UI is served a
 - `styles.css` — monochrome responsive instrument-panel design, layout rules, panel states, modal and mobile styles.
 - `app.js` — browser runtime: panel initialization, data requests, render/update routines, fallback states, localization and interactions.
 - `scripts/earth-monitor-smoke.mjs` — Node smoke validation for markup, unique IDs, JavaScript syntax, DOM references and expected data-source integrations.
-- `scripts/build-web.mjs` — web packaging/copy step.
+- `js/touch-tactical.js` — touch feedback, panel state, focus/scan transitions, telemetry toast and keyboard-triggered term help.
+- `scripts/build-web.mjs` — stages the complete dashboard bundle, including the `js/` module directory, for Capacitor.
 - `.github/workflows/pages.yml` — GitHub Pages validation and deployment workflow.
 - `.github/workflows/android-apk.yml` — Android packaging workflow.
 
