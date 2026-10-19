@@ -409,4 +409,32 @@ document.querySelectorAll(".panel-head h2").forEach(heading=>{
  openDetails=function(id){anomalyPriorOpen(id);if(id==="anomalies"){setTimeout(()=>{const body=$("dialog-body");if(body)body.innerHTML='<div class="anomaly-content">'+anomalyContent.innerHTML+'</div><div class="anomaly-list"><ul>'+anomalyState.alerts.map(a=>'<li><strong>'+safeText(a.source)+'</strong> · '+safeText(a.message)+' · <a href="'+a.url+'" target="_blank" rel="noopener noreferrer">SOURCE ↗</a></li>').join("")+'</ul></div>';},0);}};
  anomalyRender();loadAnomalyTab("space");setInterval(()=>{if(anomalyState.active==="space")loadAnomalyTab("space");},60000);
 
+
+ // Main Deck complexity toggle and advanced catalog entry point.
+ const modeToggle=$("complexity-toggle"),catalogButton=$("expert-catalog");
+ function setComplexity(mode,save=true){
+  const expert=mode==="expert";document.body.classList.toggle("expert-mode",expert);document.body.classList.toggle("simple-mode",!expert);
+  if(modeToggle){modeToggle.textContent=expert?"[ EXPERT ]":"[ SIMPLE ]";modeToggle.setAttribute("aria-pressed",String(expert));modeToggle.setAttribute("aria-label",expert?"Switch to simple explanations":"Switch to expert telemetry");}
+  if(save){try{localStorage.setItem("earthmonitor-complexity",expert?"expert":"simple");}catch{}}
+ }
+ let initialComplexity="simple";try{initialComplexity=localStorage.getItem("earthmonitor-complexity")==="expert"?"expert":"simple";}catch{}
+ setComplexity(initialComplexity,false);
+ modeToggle?.addEventListener("click",()=>setComplexity(document.body.classList.contains("expert-mode")?"simple":"expert"));
+ catalogButton?.addEventListener("click",()=>openDetails("anomalies"));
+ // Mirror the already-fetched NOAA values into the dedicated plain-language card.
+ function syncMainSpaceWeather(){
+  const kpNode=$("kp"),statusNode=$("solar-state"),speedNode=$("sw-speed");
+  const outKp=$("main-space-kp"),outStatus=$("main-space-status"),outWind=$("main-space-wind"),outExplain=$("main-space-explain");
+  if(kpNode&&outKp){const raw=parseFloat(kpNode.textContent);outKp.textContent=Number.isFinite(raw)?"Kp "+raw.toFixed(1):"Kp —";
+   if(outStatus){let label="Magnetic activity unavailable";if(Number.isFinite(raw)){label=raw<4?"Quiet magnetic field":raw<5?"Slightly unsettled":raw<6?"Minor magnetic storm":raw<7?"Moderate magnetic storm":raw<8?"Strong magnetic storm":"Severe magnetic storm";}outStatus.textContent=label;if(outExplain)outExplain.textContent=Number.isFinite(raw)?"Kp measures how much Earth's magnetic field is disturbed. "+label+".":"Kp is an estimate of disturbance in Earth's magnetic field. It is temporarily unavailable.";}
+  }
+  if(outWind&&speedNode)outWind.textContent=speedNode.textContent||"—";
+ }
+ const kpMirror=$("kp");if(kpMirror&&typeof MutationObserver!=="undefined")new MutationObserver(syncMainSpaceWeather).observe(kpMirror,{childList:true,subtree:true,characterData:true});
+ const swSpeedMirror=$("sw-speed");if(swSpeedMirror&&typeof MutationObserver!=="undefined")new MutationObserver(syncMainSpaceWeather).observe(swSpeedMirror,{childList:true,subtree:true,characterData:true});
+ syncMainSpaceWeather();setInterval(syncMainSpaceWeather,5000);
+ // In Simple Mode, turn existing technical help controls into concise click explanations.
+ const simpleGlossary={kp:"Kp estimates disturbance of Earth's magnetic field. Higher numbers mean stronger geomagnetic activity.",norad:"NORAD catalogue number: an identifier assigned to a tracked object in orbit.",tle:"Two-Line Element set: data used to estimate a satellite's orbit.",aqi:"Air Quality Index: a simplified measure of how polluted the air is.",magnitude:"Earthquake magnitude estimates the size of an earthquake; it is not the same as shaking intensity."};
+ document.querySelectorAll("[data-help-term]").forEach(el=>el.addEventListener("click",()=>{const key=el.dataset.helpTerm;const text=simpleGlossary[key];if(!text)return;const title=el.dataset.helpTerm.toUpperCase();if($("term-title"))$("term-title").textContent=title;if($("term-copy"))$("term-copy").textContent=text;const pop=$("term-popover");if(pop)pop.hidden=false;}));
+
 })();
