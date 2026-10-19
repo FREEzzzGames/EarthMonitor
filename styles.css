@@ -679,9 +679,9 @@ body{overflow:auto}
 .actions>*{flex-shrink:0}
 .actions button,.language-switch button{min-width:48px;min-height:48px;padding:6px;font-size:10px;white-space:normal;border-radius:0}
 .language-switch{display:flex;flex:0 0 auto;flex-wrap:nowrap}
-.main-grid.strategic-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:minmax(190px,auto) minmax(190px,auto);grid-auto-rows:minmax(190px,auto);gap:8px;align-items:stretch;width:100%;min-width:0;min-height:0;flex:none;overflow:visible}
-.strategic-grid>.strategic-card{display:flex;min-width:0;min-height:190px;height:100%;border:1px solid #262626;border-radius:0;background:#080808;overflow:hidden;grid-column:auto;grid-row:auto}
-.strategic-grid>.strategic-card-wide{grid-column:1/-1;min-height:150px}
+.main-grid.strategic-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(280px,auto));grid-auto-rows:minmax(280px,auto);gap:12px;align-items:stretch;width:100%;min-width:0;min-height:0;flex:none;overflow:visible}
+.strategic-grid>.strategic-card{display:flex;min-width:0;min-height:280px;height:100%;border:1px solid #262626;border-radius:0;background:#080808;overflow:hidden;grid-column:auto;grid-row:auto}
+.strategic-grid>.strategic-card-wide{grid-column:auto;min-height:280px}
 .strategic-trigger{appearance:none;display:flex;flex:1 1 auto;flex-direction:column;align-items:stretch;justify-content:space-between;gap:16px;width:100%;min-width:0;min-height:100%;padding:14px;background:transparent;color:#eee;border:0;border-radius:0;text-align:left;cursor:pointer;touch-action:manipulation}
 .strategic-heading{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:start;gap:10px;padding-bottom:10px;border-bottom:1px solid #262626;font-size:11px;line-height:1.5}
 .strategic-heading>span:first-child{color:#888}
@@ -707,5 +707,5 @@ body{overflow:auto}
 .strategic-source-link{display:inline-flex;align-items:center;min-height:48px;padding:8px;color:#fff}
 button:active,[role="button"]:active{background:#fff!important;color:#000!important;border-radius:0}
 button,a,input,.panel,.strategic-dialog{border-radius:0!important}
-@media(max-width:1050px){.masthead{gap:6px}.brand{flex:1 1 260px}.actions{flex:1 1 100%;justify-content:flex-start}.main-grid.strategic-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto}.strategic-grid>.strategic-card-wide{grid-column:1/-1}}
-@media(max-width:620px){#deck{padding:5px}.masthead{padding:4px 2px 8px}.brand{flex:1 1 100%;font-size:16px}.subbrand{flex:1 1 100%;margin-left:0;text-align:left}.status{flex:1 1 100%}.actions{flex:1 1 100%;justify-content:flex-start}.actions button,.language-switch button{min-height:48px;min-width:48px}.main-grid.strategic-grid{grid-template-columns:minmax(0,1fr);grid-auto-rows:minmax(170px,auto)}.strategic-grid>.strategic-card,.strategic-grid>.strategic-card-wide{grid-column:auto;min-height:170px}.strategic-grid>.strategic-card-wide{grid-column:1}.strategic-dialog-nav{grid-template-columns:minmax(0,1fr)}.strategic-dialog-content{max-height:48dvh}}
+@media(max-width:1050px){.masthead{gap:6px}.brand{flex:1 1 260px}.actions{flex:1 1 100%;justify-content:flex-start}.main-grid.strategic-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto;grid-auto-rows:minmax(230px,auto)}.strategic-grid>.strategic-card,.strategic-grid>.strategic-card-wide{grid-column:auto;min-height:230px}}
+@media(max-width:620px){#deck{padding:5px}.masthead{padding:4px 2px 8px}.brand{flex:1 1 100%;font-size:16px}.subbrand{flex:1 1 100%;margin-left:0;text-align:left}.status{flex:1 1 100%}.actions{flex:1 1 100%;justify-content:flex-start}.actions button,.language-switch button{min-height:44px;min-width:44px}.main-grid.strategic-grid{grid-template-columns:minmax(0,1fr);grid-template-rows:auto;grid-auto-rows:minmax(190px,auto);gap:8px}.strategic-grid>.strategic-card,.strategic-grid>.strategic-card-wide{grid-column:auto;min-height:190px}.strategic-trigger{padding:12px;gap:12px}.strategic-dialog-nav{grid-template-columns:minmax(0,1fr)}.strategic-dialog-content{max-height:48dvh}}
