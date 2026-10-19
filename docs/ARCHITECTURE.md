@@ -118,3 +118,30 @@ window.EARTHMONITOR_NICHE_CONFIG = {
   gbfs: { url: "/api/niche/gbfs-discovery" }
 };
 ```
+
+
+## 10. Deep Telemetry & Infrastructure Feeds
+
+Implemented by `index.html`, `styles.css`, and `js/deep-telemetry.js`.
+
+- **NASA DSN:** links to NASA's DSN Now visualization. No unsupported public JSON endpoint is assumed; live station/spacecraft records require a verified API or deployment-owned proxy.
+- **Space-Track:** account-authenticated service. Orbit-decay/re-entry data requires credentials and server-side proxying; no token is shipped to the browser.
+- **Argo:** attempts a public ERDDAP table query for recent float profiles. Argo observations are profile-based and can be delayed, not continuous real-time buoy telemetry.
+- **NOAA DART:** requests a public NDBC DART buoy text feed; buoy ID coverage varies. No tsunami warning or safety inference is made from missing observations.
+- **Subsea cables:** links to a public cable map. It is not a global live cable-health API; outage status requires operator/licensed telemetry.
+- **Grid carbon intensity:** requires provider-specific authorized API access for current carbon intensity and generation mix. Tokens belong in server-side secrets.
+
+Each source uses a bounded request, aborts the previous request when switching tabs, caches only successful responses, preserves the observation timestamp and displays an explicit cache/unavailable state. Optional authorized same-origin proxies can be configured before `js/deep-telemetry.js` loads:
+
+```js
+window.EARTHMONITOR_DEEP_CONFIG = {
+  dsn: { url: "/api/deep/dsn" },
+  orbit: { url: "/api/deep/orbit" },
+  argo: { url: "/api/deep/argo" },
+  dart: { url: "/api/deep/dart" },
+  cables: { url: "/api/deep/cables" },
+  carbon: { url: "/api/deep/carbon" }
+};
+```
+
+Proxy endpoints should normalize provider responses into JSON and return provenance, timestamp, and freshness metadata. Static pages cannot securely hold Space-Track or carbon-provider credentials.
