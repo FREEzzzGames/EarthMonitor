@@ -97,3 +97,24 @@ window.EARTHMONITOR_GLOBAL_STREAM_CONFIG = {
 ```
 
 The expected proxy response is JSON. The browser stores only the last successfully fetched payload in localStorage and labels fallback data as cached/stale. A cache is not a substitute for an authenticated provider integration. External LightningMaps visualization remains an outbound link, not an in-app strike telemetry API.
+
+
+## 9. Niche Telemetry & IoT Feeds
+
+Implemented in `index.html`, `styles.css`, and `js/niche-telemetry.js`:
+
+- **OGN / ADS-B Exchange:** links to OGN and documents provider restrictions. This client does not claim unrestricted ADS-B Exchange access or label aircraft as military without a supported data source.
+- **Sensor.Community:** attempts a bounded nearby-area sensor query and renders returned PM measurements/record timestamps when the feed and browser CORS permit. Sensor availability is not uniform.
+- **GBFS:** reads a provider GBFS discovery document (default demonstration endpoint: Citi Bike NYC) and lists discovered systems. GBFS is a standard, not a universal global mobility endpoint; provider-specific feeds are required for live station availability.
+- **GitHub Events:** fetches public events from the official REST API. This is a sampled and rate-limited public event feed, not a complete commit counter.
+- **Shodan:** requires a provider-specific authorized API or backend proxy for live scan/noise telemetry. InternetDB is not a global scanning stream, so the UI does not invent a scan rate.
+
+All requests have a timeout, cancellation when the selected feed changes, last-successful-response cache, and an explicit unavailable/cache state. Cached observations retain their original timestamp. Provider credentials belong in server-side secrets, never in static JavaScript. Optional proxy endpoints can be supplied by a deployment-owned bootstrap script before `js/niche-telemetry.js`:
+
+```js
+window.EARTHMONITOR_NICHE_CONFIG = {
+  aircraft: { url: "/api/niche/aircraft" },
+  shodan: { url: "/api/niche/shodan" },
+  gbfs: { url: "/api/niche/gbfs-discovery" }
+};
+```
