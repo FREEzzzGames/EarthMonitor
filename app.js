@@ -62,6 +62,7 @@ function openDetails(id){
  }
  dialog.dataset.panel=id;if(!dialog.open)dialog.showModal();document.dispatchEvent(new CustomEvent("earthmonitor:panel-open",{detail:{id}}));
 }
+document.addEventListener("earthmonitor:panel-request",event=>{const id=event.detail?.id;if(id&&byPanel(id))openDetails(id);});
 document.querySelectorAll("[data-monitor-tab]").forEach(button=>button.addEventListener("click",()=>{const mode=button.dataset.monitorTab;document.querySelectorAll("[data-monitor-tab]").forEach(tab=>{const active=tab===button;tab.classList.toggle("is-active",active);tab.setAttribute("aria-selected",String(active));});document.querySelectorAll("[data-monitor-view]").forEach(view=>{const active=view.dataset.monitorView===mode;view.classList.toggle("is-active",active);view.hidden=!active;});const titles={earthdata:"GLOBAL EARTH MONITOR",spaceweather:"SPACE WEATHER & SOLAR FLUX",wildfires:"GLOBAL WILDFIRES & THERMAL ANOMALIES",airquality:"AIR QUALITY & ATMOSPHERE"};set("earthdata-title",titles[mode]||"GLOBAL EARTH MONITOR");}));
 
 const glossary={
