@@ -8,10 +8,11 @@ const panelIds = [...html.matchAll(/data-panel="([^"]+)"/g)].map(match => match[
 assert.deepEqual(panelIds, ["earth", "stars", "weather", "orbit", "video", "earthdata", "moon", "satellites", "cameras"], "dashboard panel set changed");
 const idList = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
 assert.equal(new Set(idList).size, idList.length, "duplicate HTML ids found");
-const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(match => match[1]);
-assert.equal(scripts.length, 1, "expected one inline dashboard runtime");
-new vm.Script(scripts[0], { filename: "earth-monitor.inline.js" });
-const refs = [...scripts[0].matchAll(/\$\(["']([^"']+)["']\)/g)].map(match => match[1]);
+const script = await readFile(new URL("../app.js", import.meta.url), "utf8");
+assert.ok(html.includes('src="./app.js"'), "external dashboard runtime missing");
+assert.ok(html.includes('href="./styles.css"'), "external dashboard stylesheet missing");
+new vm.Script(script, { filename: "app.js" });
+const refs = [...script.matchAll(/\$\(["']([^"']+)["']\)/g)].map(match => match[1]);
 assert.deepEqual([...new Set(refs.filter(id => !idList.includes(id)))], [], "runtime references missing DOM ids");
 for (const endpoint of ["api.open-meteo.com/v1/forecast","air-quality-api.open-meteo.com/v1/air-quality","api.wheretheiss.at/v1/satellites/25544","earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson","eonet.gsfc.nasa.gov/api/v3/events","services.swpc.noaa.gov/json/planetary_k_index_1m.json","celestrak.org/NORAD/elements/gp.php?GROUP=STATIONS&FORMAT=JSON","verkehr.autobahn.de/o/autobahn/"]) assert.ok(html.includes(endpoint), "missing data source: "+endpoint);
 assert.ok(html.includes('id="earth-ambient-video" autoplay muted loop playsinline') && html.includes('id="space-ambient-video" autoplay muted loop playsinline'), "ambient video elements missing");
@@ -20,4 +21,4 @@ assert.ok(html.includes('id="camera-grid"') && html.includes('id="rotate-cams"')
 assert.ok(html.includes("setInterval(loadRegionalCameraFeeds,60000)") && html.includes("camera-timestamp") && !html.includes("STANDBY · CAM") && !html.includes("LIVE OFFLINE · NO ARCHIVE CLIP FOUND"), "camera refresh/layout/fallback status missing");
 assert.ok(html.includes("function setLanguage(code") && html.includes("camTitle") && html.includes("rotateCams"), "localization missing");
 assert.ok(html.includes('id="landscape"') && html.includes('id="refresh"') && html.includes('id="help-open"'), "main controls missing");
-console.log("EARTH_MONITOR_SMOKE_OK", JSON.stringify({ panels: panelIds.length, uniqueIds: idList.length, runtimeRefs: refs.length }));
+console.log("EARTH_MONITOR_SMOKE_OK", JSON.stringify({ panels: panelIds.length, uniqueIds: idList.length, runtimeRefs: refs.length, externalAssets: 2 }));
