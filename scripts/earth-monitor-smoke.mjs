@@ -71,7 +71,7 @@ assert.ok(html.includes('id="deep-telemetry-dialog"') && html.includes('data-dee
 assert.ok(html.includes('src="./js/deep-telemetry.js"'), "deep telemetry controller is not loaded");
 const deep = await readFile(new URL("../js/deep-telemetry.js", import.meta.url), "utf8");
 new vm.Script(deep, { filename: "js/deep-telemetry.js" });
-for (const endpoint of ["erddap.ifremer.fr/erddap/tabledap/ArgoFloats.json", "www.ndbc.noaa.gov/data/realtime2/21415.dart", "EARTHMONITOR_DEEP_CONFIG", "eyes.nasa.gov/dsn/dsn.html", "space-track.org", "submarinecablemap.com", "electricitymaps.com"]) assert.ok(deep.includes(endpoint), "deep feed source/config missing: "+endpoint);
+for (const endpoint of ["erddap.ifremer.fr/erddap/tabledap/ArgoFloats.json", "www.ndbc.noaa.gov/data/realtime2/21415.dart", "EARTHMONITOR_DEEP_CONFIG", "eyes.nasa.gov/dsn/dsn.html", "celestrak.org/NORAD/elements/", "submarinecablemap.com", "app.electricitymaps.com"]) assert.ok(deep.includes(endpoint), "deep feed source/config missing: "+endpoint);
 assert.ok(deep.includes("FEED TEMPORARILY UNAVAILABLE - USING CACHE") && deep.includes("AbortController"), "deep feed cache fallback or cancellation missing");
 assert.ok(css.includes(".deep-source-select button") && css.includes("min-height:48px") && css.includes("border-radius:0"), "deep telemetry touch-first styles missing");
 const strategic = await readFile(new URL("../js/strategic-dashboard.js", import.meta.url), "utf8");
