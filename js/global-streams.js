@@ -37,9 +37,21 @@ function renderData(key,data,fromCache=false,savedAt=Date.now()){
   setText("global-stream-status",fromCache?"[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE":"NOAA SWPC FEED CONNECTED");
   paintStatus(fromCache?"[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE":"NOAA SWPC · OVATION AURORA FORECAST",fromCache?"warning":"ok");
  }else{
-  if(host)host.append(addMetric("SOURCE",SOURCES[key].url));
-  paintStatus("[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE","warning");
-  setText("global-stream-status","[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE");
+  if(host){
+   host.append(addMetric("SOURCE",SOURCES[key].url));
+   const rows=Array.isArray(data)?data.slice(0,12):Object.entries(data||{}).slice(0,12);
+   for(const item of rows){
+    if(Array.isArray(item)&&item.length===2){
+     const value=item[1];
+     const display=(value===null||["string","number","boolean"].includes(typeof value))?String(value):Array.isArray(value)?"["+value.length+" items]":Object.keys(value||{}).slice(0,5).join(", ");
+     host.append(addMetric(String(item[0]).replace(/[_-]+/g," ").toUpperCase(),display.slice(0,180)));
+    }else if(item&&typeof item==="object"){
+     host.append(addMetric("RECORD",Object.entries(item).slice(0,4).map(([k,v])=>k+": "+String(v)).join(" · ").slice(0,180)));
+    }
+   }
+  }
+  paintStatus(fromCache?"[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE":"PROXY FEED CONNECTED",fromCache?"warning":"ok");
+  setText("global-stream-status",fromCache?"[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE":"PROXY FEED CONNECTED");
  }
  const stamp=savedAt?safeDate(savedAt):"timestamp unavailable";
  setText("global-detail-updated",(fromCache?freshness:"UPDATED")+" · "+stamp);
@@ -49,7 +61,7 @@ async function fetchJson(url,signal){const response=await fetch(url,{method:"GET
 async function loadCyber(){
  const url=SOURCES.cyber.url;const data=await fetchJson(url,state.controllers.get("cyber")?.signal);
  if(!data||typeof data!=="object")throw new Error("Unexpected URLhaus response");
- const entries=Array.isArray(data)?data:Object.values(data);
+ const entries=Array.isArray(data)?data:(Array.isArray(data?.urls)?data.urls:(Array.isArray(data?.data)?data.data:Object.values(data).filter(x=>x&&typeof x==="object")));
  if(!entries.length)throw new Error("Empty URLhaus response");
  writeCache("cyber",entries);renderData("cyber",entries,false,Date.now());
 }
