@@ -8,7 +8,7 @@ const FEEDS={
  cables:{title:"SUBSEA CABLE INFRASTRUCTURE",url:"https://www.submarinecablemap.com/",description:"Subsea cable maps are public reference maps, not a universal live cable health API. No cable outage status is fabricated; a licensed or operator feed is required for live status."},
  carbon:{title:"GRID CARBON INTENSITY",url:"https://app.electricitymaps.com/",description:"Electricity Maps offers carbon intensity and generation mix, but API access and geographic coverage depend on provider authorization. Use a server-side proxy for tokens."}
 };
-const state={active:"dsn",controller:null};
+const state={active:"dsn",controller:null,demo:false};
 function text(id,v){const n=$(id);if(n)n.textContent=v}
 function link(id,v){const n=$(id);if(n)n.href=v}
 function cacheGet(k){try{const x=JSON.parse(localStorage.getItem(PREFIX+k)||"null");return x&&x.savedAt&&x.data!==undefined?x:null}catch{return null}}
@@ -60,6 +60,8 @@ async function load(k){
  }finally{clearTimeout(timeout)}
 }
 function open(){const d=$("deep-telemetry-dialog");if(d&&!d.open)d.showModal();load(state.active)}
+function renderDemoState(){const b=$("deep-demo-toggle"),st=$("deep-demo-status");if(b){b.setAttribute("aria-pressed",String(state.demo));b.textContent=state.demo?"DISABLE DEMO / SIMULATION MODE":"ENABLE DEMO / SIMULATION MODE"}if(st)st.textContent=state.demo?"DEMO ACTIVE · NO LIVE VALUES ARE REPLACED":"LIVE PROVIDER DATA ONLY";const host=$("deep-detail-data");if(host){let note=$("deep-demo-notice");if(state.demo){if(!note){note=document.createElement("div");note.id="deep-demo-notice";note.className="deep-feed-status";host.prepend(note)}note.textContent="SIMULATION MODE ACTIVE · Provider values above remain real/cached when available. No live feed is configured for this module; illustrative simulation must not be used for operational decisions."}else note?.remove()}}
+$("deep-demo-toggle")?.addEventListener("click",()=>{state.demo=!state.demo;renderDemoState()});
 document.querySelectorAll("[data-deep-select]").forEach(b=>b.addEventListener("click",()=>load(b.dataset.deepSelect)));
 document.querySelectorAll("[data-deep-open]").forEach(b=>b.addEventListener("click",open));
 document.querySelectorAll("[data-deep-close]").forEach(b=>b.addEventListener("click",()=>$("deep-telemetry-dialog")?.close()));
