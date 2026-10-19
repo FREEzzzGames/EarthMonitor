@@ -98,3 +98,8 @@ assert.ok(strategic.includes("cloudflare-dns.com/dns-query?name=cloudflare.com&t
 assert.ok(strategic.includes("transportLoading") && strategic.includes("infraLoading") && strategic.includes("transportUnavailable"), "new transport and infrastructure states must be localized");
 assert.ok(css.includes("Final touch target normalization") && css.includes(".term-help{display:inline-flex") && css.includes("min-height:48px"), "touch targets must be normalized to 48px");
 assert.ok(!strategic.includes('if($("strategic-transit"))$("strategic-transit").textContent=tr("noFeed")') && strategic.includes('totalDepartures+" · "+t("transportDepartures")'), "live transit card summary must not be overwritten by the periodic summary refresh");
+
+assert.equal((html.match(/data-expert-footer="true"/g)||[]).length,5,"all five strategic cards must include an expert diagnostics footer");
+assert.ok(css.includes("PLANET EARTH CONTROL DECK — bunker terminal skin") && css.includes("repeating-linear-gradient(to bottom") && css.includes("deck-led-pulse") && css.includes("deck-alarm"),"bunker visual layer, scanlines and LED states missing");
+assert.ok(css.includes("body.expert-mode .expert-footer{display:block}") && app.includes('toggle.textContent=on?"[ EXPERT ]":"[ SIMPLE ]"'),"SIMPLE/EXPERT diagnostics toggle missing");
+assert.ok(app.includes("data-expert-unix") && app.includes("data-expert-ping") && app.includes("UNAVAILABLE"),"expert footer must show timestamps and measured gateway latency/status");
