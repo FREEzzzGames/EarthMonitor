@@ -122,6 +122,21 @@
  </div>
  <div class="footer"><span>NICHE TELEMETRY · LIVE / CACHED</span><button type="button" data-niche-open>OPEN FEEDS ↗</button></div>
 </section>
+<section class="panel panel-deep-telemetry" data-panel="deep-telemetry">
+ <div class="panel-head"><span class="index">15</span><h2>DEEP TELEMETRY / INFRASTRUCTURE</h2><button type="button" data-deep-open aria-label="Open deep telemetry">↗</button></div>
+ <div class="panel-body">
+  <div class="deep-source-select" role="group" aria-label="Deep telemetry sources">
+   <button type="button" data-deep-select="dsn" aria-pressed="true">NASA DSN</button>
+   <button type="button" data-deep-select="orbit" aria-pressed="false">ORBIT / DECAY</button>
+   <button type="button" data-deep-select="argo" aria-pressed="false">ARGO FLOATS</button>
+   <button type="button" data-deep-select="dart" aria-pressed="false">DART TSUNAMI</button>
+   <button type="button" data-deep-select="cables" aria-pressed="false">SUBSEA CABLES</button>
+   <button type="button" data-deep-select="carbon" aria-pressed="false">GRID CARBON</button>
+  </div>
+  <div class="deep-summary"><span class="kicker" id="deep-summary-title">DEEP SPACE NETWORK</span><strong id="deep-summary-status">CONNECTING TO PUBLIC FEED…</strong><p id="deep-summary-note">Source values are shown only when returned by the provider.</p></div>
+ </div>
+ <div class="footer"><span>SPACE · OCEAN · INFRASTRUCTURE</span><button type="button" data-deep-open>OPEN TELEMETRY ↗</button></div>
+</section>
 <section class="panel panel-cameras" data-panel="cameras" data-panel-number="12">
   <div class="panel-head"><span class="index">10</span><h2>REGIONAL CAMERAS / 300 KM RADIUS</h2><button id="rotate-cams" type="button" title="Rotate active cameras">↻ ROTATE CAMS</button></div>
   <div class="camera-grid" id="camera-grid" aria-live="polite"></div>
@@ -159,6 +174,26 @@
   <div class="niche-dialog-footer"><span id="niche-detail-updated">NO DATA LOADED</span><button type="button" data-niche-refresh>REFRESH FEED ↻</button></div>
  </div>
 </dialog>
+<dialog class="details-dialog deep-telemetry-dialog" id="deep-telemetry-dialog" aria-labelledby="deep-dialog-title">
+ <div class="dialog-head"><h2 id="deep-dialog-title">DEEP TELEMETRY / INFRASTRUCTURE FEEDS</h2><button type="button" data-deep-close>CLOSE ✕</button></div>
+ <div class="deep-dialog-body">
+  <nav class="deep-tabs" aria-label="Deep telemetry sources">
+   <button type="button" data-deep-select="dsn" aria-pressed="true">01 NASA DSN</button>
+   <button type="button" data-deep-select="orbit" aria-pressed="false">02 ORBIT</button>
+   <button type="button" data-deep-select="argo" aria-pressed="false">03 ARGO</button>
+   <button type="button" data-deep-select="dart" aria-pressed="false">04 DART</button>
+   <button type="button" data-deep-select="cables" aria-pressed="false">05 CABLES</button>
+   <button type="button" data-deep-select="carbon" aria-pressed="false">06 CARBON</button>
+  </nav>
+  <section class="deep-detail" aria-live="polite">
+   <div class="kicker">SOURCE STATUS</div><h3 id="deep-detail-title">DEEP SPACE NETWORK</h3>
+   <div id="deep-detail-status" class="deep-feed-status">CONNECTING…</div><p id="deep-detail-description"></p>
+   <div id="deep-detail-data" class="deep-detail-data"></div><div id="deep-detail-list" class="deep-detail-list"></div>
+   <a id="deep-detail-source" href="https://eyes.nasa.gov/dsn/dsn.html" target="_blank" rel="noopener noreferrer">OPEN SOURCE ↗</a>
+  </section>
+  <div class="deep-dialog-footer"><span id="deep-detail-updated">NO DATA LOADED</span><button type="button" data-deep-refresh>REFRESH FEED ↻</button></div>
+ </div>
+</dialog>
 <dialog class="details-dialog global-stream-dialog" id="global-stream-dialog" aria-labelledby="global-stream-dialog-title">
  <div class="dialog-head"><h2 id="global-stream-dialog-title">GLOBAL STREAMS / TELEMETRY SELECTOR</h2><button type="button" data-global-close>CLOSE ✕</button></div>
  <div class="global-stream-dialog-body">
@@ -184,6 +219,7 @@
 <script src="./js/touch-tactical.js" defer></script>
 <script src="./js/global-streams.js" defer></script>
 <script src="./js/niche-telemetry.js" defer></script>
+<script src="./js/deep-telemetry.js" defer></script>
 <script src="./app.js" defer></script>
 </body>
 </html>
