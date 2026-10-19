@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Planet Earth Control Deck</title>
+  <desc id="desc">Monochrome mission patch showing Earth, coordinate grid, and an orbital satellite.</desc>
+  <circle cx="256" cy="256" r="248" fill="#000" stroke="#fff" stroke-width="5"/>
+  <g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="245" cy="263" r="142"/>
+    <ellipse cx="245" cy="263" rx="64" ry="142"/>
+    <ellipse cx="245" cy="263" rx="112" ry="142"/>
+    <ellipse cx="245" cy="263" rx="142" ry="47"/>
+    <ellipse cx="245" cy="263" rx="142" ry="94"/>
+    <path d="M103 263h284M121 192h248M121 334h248"/>
+    <path d="M80 304C104 140 239 54 379 107c69 26 112 87 124 149" stroke-width="2"/>
+    <path d="M89 322C147 432 284 471 395 398c39-26 67-61 82-103" stroke-width="2"/>
+    <path d="M345 103l31-28 35 6 17 30-22 24-33-5z" fill="#000"/>
+    <path d="M365 100l27 13m-17-28 6 43m-26-16 39-7" />
+    <path d="M375 88l-18-19m44 49 25 13m-52-3-8 25" />
+  </g>
+  <g fill="#fff">
+    <circle cx="245" cy="263" r="2.4"/>
+    <circle cx="376" cy="76" r="3"/>
+    <circle cx="80" cy="304" r="2"/>
+    <circle cx="477" cy="295" r="2"/>
+  </g>
+  <g fill="#fff" font-family="monospace" text-anchor="middle">
+    <text x="256" y="39" font-size="15" letter-spacing="4">EARTH MONITOR</text>
+    <text x="256" y="477" font-size="13" letter-spacing="3">PLANETARY TELEMETRY</text>
+  </g>
+</svg>
