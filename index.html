@@ -104,6 +104,24 @@
  </div>
  <div class="footer"><span>PUBLIC FEEDS · NO CLIENT API KEYS</span><button type="button" data-global-open>OPEN TELEMETRY ↗</button></div>
 </section>
+<section class="panel panel-niche-telemetry" data-panel="niche-telemetry">
+ <div class="panel-head"><span class="index">14</span><h2>NICHE TELEMETRY / IoT FEEDS</h2><button type="button" data-niche-open aria-label="Open niche telemetry">↗</button></div>
+ <div class="panel-body">
+  <div class="niche-source-select" role="group" aria-label="Niche telemetry source selector">
+   <button type="button" data-niche-select="aircraft" aria-pressed="true">OGN / ADS-B</button>
+   <button type="button" data-niche-select="sensors" aria-pressed="false">SENSOR.COMMUNITY</button>
+   <button type="button" data-niche-select="gbfs" aria-pressed="false">CITY GBFS</button>
+   <button type="button" data-niche-select="github" aria-pressed="false">GITHUB ACTIVITY</button>
+   <button type="button" data-niche-select="shodan" aria-pressed="false">SHODAN NOISE</button>
+  </div>
+  <div class="niche-summary">
+   <span class="kicker" id="niche-summary-title">RADIO / AVIATION</span>
+   <strong id="niche-summary-status">CONNECTING TO PUBLIC FEED…</strong>
+   <p id="niche-summary-note">No simulated aircraft or network measurements.</p>
+  </div>
+ </div>
+ <div class="footer"><span>NICHE TELEMETRY · LIVE / CACHED</span><button type="button" data-niche-open>OPEN FEEDS ↗</button></div>
+</section>
 <section class="panel panel-cameras" data-panel="cameras" data-panel-number="12">
   <div class="panel-head"><span class="index">10</span><h2>REGIONAL CAMERAS / 300 KM RADIUS</h2><button id="rotate-cams" type="button" title="Rotate active cameras">↻ ROTATE CAMS</button></div>
   <div class="camera-grid" id="camera-grid" aria-live="polite"></div>
@@ -120,6 +138,27 @@
 </section><dialog class="details-dialog help-dialog" id="operator-help"><div class="dialog-head"><h2>OPERATOR REFERENCE / HELP</h2><button type="button" id="help-close">CLOSE ✕</button></div><div class="dialog-body" id="help-content"></div><div class="dialog-actions"><button type="button" id="help-start-tour">RUN INTRO TOUR ↗</button></div></dialog>
 <div class="intro-overlay" id="intro-overlay" hidden><section class="intro-card" role="dialog" aria-modal="true" aria-labelledby="intro-title"><div class="intro-kicker">PLANET EARTH CONTROL DECK · FIRST BOOT</div><h2 id="intro-title">OPERATOR INITIALIZATION</h2><p id="intro-copy">Initialize your operator view.</p><div class="intro-progress" id="intro-progress">STEP 01 / 04</div><div class="intro-actions"><button type="button" id="intro-skip">SKIP</button><button type="button" id="intro-next">NEXT ↗</button></div></section></div>
 <div class="term-popover" id="term-popover" role="status" hidden><button type="button" id="term-close" aria-label="Close explanation">×</button><strong id="term-title"></strong><p id="term-copy"></p></div>
+<dialog class="details-dialog niche-telemetry-dialog" id="niche-telemetry-dialog" aria-labelledby="niche-dialog-title">
+ <div class="dialog-head"><h2 id="niche-dialog-title">NICHE TELEMETRY / SOURCE SELECTOR</h2><button type="button" data-niche-close>CLOSE ✕</button></div>
+ <div class="niche-dialog-body">
+  <nav class="niche-tabs" aria-label="Niche data feeds">
+   <button type="button" data-niche-select="aircraft" aria-pressed="true">01 OGN / ADS-B</button>
+   <button type="button" data-niche-select="sensors" aria-pressed="false">02 AIR SENSORS</button>
+   <button type="button" data-niche-select="gbfs" aria-pressed="false">03 GBFS SHARING</button>
+   <button type="button" data-niche-select="github" aria-pressed="false">04 GITHUB</button>
+   <button type="button" data-niche-select="shodan" aria-pressed="false">05 SHODAN</button>
+  </nav>
+  <section class="niche-detail" aria-live="polite">
+   <div class="kicker" id="niche-detail-kicker">SOURCE STATUS</div><h3 id="niche-detail-title">RADIO / AVIATION</h3>
+   <div id="niche-detail-status" class="niche-feed-status">CONNECTING…</div>
+   <p id="niche-detail-description"></p>
+   <div id="niche-detail-data" class="niche-detail-data"></div>
+   <div id="niche-detail-list" class="niche-detail-list"></div>
+   <a id="niche-detail-source" href="https://glidernet.org/" target="_blank" rel="noopener noreferrer">OPEN SOURCE ↗</a>
+  </section>
+  <div class="niche-dialog-footer"><span id="niche-detail-updated">NO DATA LOADED</span><button type="button" data-niche-refresh>REFRESH FEED ↻</button></div>
+ </div>
+</dialog>
 <dialog class="details-dialog global-stream-dialog" id="global-stream-dialog" aria-labelledby="global-stream-dialog-title">
  <div class="dialog-head"><h2 id="global-stream-dialog-title">GLOBAL STREAMS / TELEMETRY SELECTOR</h2><button type="button" data-global-close>CLOSE ✕</button></div>
  <div class="global-stream-dialog-body">
@@ -144,6 +183,7 @@
 <dialog class="details-dialog" id="details"><div class="dialog-head"><h2 id="dialog-title">PANEL DETAILS</h2><button id="dialog-close" type="button">CLOSE ✕</button></div><div class="dialog-body" id="dialog-body"></div><div class="dialog-actions"><button id="dialog-refresh" type="button">REFRESH SOURCES ↻</button></div></dialog>
 <script src="./js/touch-tactical.js" defer></script>
 <script src="./js/global-streams.js" defer></script>
+<script src="./js/niche-telemetry.js" defer></script>
 <script src="./app.js" defer></script>
 </body>
 </html>
