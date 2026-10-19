@@ -9,7 +9,7 @@ const FEEDS={
  github:{title:"GITHUB PUBLIC ACTIVITY",url:"https://api.github.com/events",description:"Public GitHub Events API provides a sampled, rate-limited stream of public events; it is not a complete global commit counter."},
  shodan:{title:"SHODAN NETWORK NOISE",url:"https://developer.shodan.io/api",description:"Shodan InternetDB is host-oriented enrichment and is not a global scan-rate stream. Live scan telemetry requires authorized Shodan access or a licensed backend feed."}
 };
-const state={active:"aircraft",controller:null};
+const state={active:"aircraft",controller:null,requestId:0};
 function txt(id,value){const n=$(id);if(n)n.textContent=value}
 function href(id,url){const n=$(id);if(n)n.href=url}
 function cacheRead(k){try{const v=JSON.parse(localStorage.getItem(PREFIX+k)||"null");return v&&v.savedAt&&v.data!==undefined?v:null}catch{return null}}
@@ -45,7 +45,10 @@ function render(k,data,cached=false,savedAt=Date.now()){
 }
 async function fetchJson(url,signal){const res=await fetch(url,{headers:{Accept:"application/json"},cache:"no-store",signal});if(!res.ok)throw new Error("HTTP "+res.status);return res.json()}
 async function load(k){
- if(state.controller)state.controller.abort();const controller=new AbortController();state.controller=controller;const timeout=setTimeout(()=>controller.abort(),12000);setActive(k);status("CONNECTING TO PUBLIC ENDPOINT…","loading");
+ if(state.controller)state.controller.abort();
+ const requestId=++state.requestId;
+ const controller=new AbortController();state.controller=controller;
+ const timeout=setTimeout(()=>controller.abort(),12000);setActive(k);status("CONNECTING TO PUBLIC ENDPOINT…","loading");
  try{
   let data;
   if(k==="sensors"){
@@ -65,13 +68,15 @@ async function load(k){
    if(!cfg?.url)throw new Error("Provider-specific live endpoint is not configured");
    data=await fetchJson(cfg.url,controller.signal);
   }
+  if(requestId!==state.requestId)return;
   cacheWrite(k,data);render(k,data,false,Date.now());
  }catch(error){
+  if(requestId!==state.requestId)return;
   const old=cacheRead(k);
   if(old)render(k,old.data,true,old.savedAt);
   else{
-   status("[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE","warning");
-   txt("niche-summary-status","[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE");
+   status("LIVE SOURCE UNAVAILABLE","warning");
+   txt("niche-summary-status","LIVE SOURCE UNAVAILABLE");
    txt("niche-detail-updated","NO CACHE AVAILABLE · "+(error?.message||"source unavailable"));
    const host=$("niche-detail-data");if(host){host.replaceChildren();host.append(metric("DATA STATE","Unavailable"));host.append(metric("REASON",(error?.message||"Feed unavailable").slice(0,150)))}
   }
