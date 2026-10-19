@@ -1,0 +1,330 @@
+:root{color-scheme:dark;--bg:#050505;--panel:#0b0b0b;--panel2:#111;--line:#383838;--muted:#999;--ink:#f4f4f4;--soft:#c9c9c9;--bad:#ddd;--pad:clamp(6px,.8vw,12px);font:12px/1.35 "SFMono-Regular",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--ink)}body{overflow:hidden}button,a,input{font:inherit}button{color:var(--ink);background:#101010;border:1px solid #555;padding:6px 9px;cursor:pointer}button:hover,button:focus-visible,a:focus-visible{outline:1px solid #fff;outline-offset:2px}a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}button:disabled{opacity:.45;cursor:wait}.deck{height:100dvh;min-height:0;display:flex;flex-direction:column;gap:6px;padding:var(--pad);overflow:hidden}.masthead{display:flex;align-items:center;gap:12px;min-height:34px;border-bottom:2px solid var(--ink);padding:0 2px 7px}.mark{width:7px;height:24px;background:var(--ink);flex:0 0 auto}.brand{font-size:clamp(15px,2.2vw,28px);font-weight:900;letter-spacing:.09em;line-height:1.05;white-space:nowrap}.subbrand{color:var(--muted);font-size:9px;letter-spacing:.12em;margin-left:auto;text-align:right}.actions{display:flex;align-items:center;gap:4px}.actions button{font-size:10px;white-space:nowrap}.status{font-size:10px;color:var(--soft);white-space:nowrap}.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:6px;flex:1;min-height:0;overflow:hidden}.panel{position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--panel);border:1px solid var(--line);display:flex;flex-direction:column}.panel-head{display:flex;align-items:center;gap:6px;padding:7px 8px;border-bottom:1px solid var(--line);min-height:29px}.index{font-size:9px;color:#777;letter-spacing:.1em}.panel h2{font-size:10px;letter-spacing:.11em;margin:0;text-transform:uppercase;flex:1;min-width:0}.expand{padding:2px 5px;font-size:10px;line-height:1.2}.panel-body{padding:8px;min-height:0;overflow:hidden;flex:1}.kicker{color:var(--muted);font-size:9px;letter-spacing:.08em;text-transform:uppercase}.big{font-size:clamp(18px,2.5vw,34px);font-weight:800;letter-spacing:-.04em;line-height:1.05}.medium{font-size:clamp(13px,1.5vw,19px);font-weight:700}.muted{color:var(--muted)}.small{font-size:10px;color:var(--muted)}.line{height:1px;background:#303030;margin:7px 0}.rows{display:grid;gap:4px}.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:baseline;font-size:10px}.row span:first-child{color:#aaa}.row strong{text-align:right;font-size:10px;max-width:65%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mono{font-variant-numeric:tabular-nums}.visual{position:relative;flex:1;min-height:0;display:grid;place-items:center;overflow:hidden;background:radial-gradient(ellipse at center,#151515 0,#080808 65%,#050505 100%)}.globe{width:min(82%,210px);aspect-ratio:1;border:1px solid #aaa;border-radius:50%;position:relative;overflow:hidden;background:radial-gradient(circle at 33% 29%,#555 0,#222 28%,#090909 68%);box-shadow:inset -14px -7px 24px #000,0 0 18px #fff1}.globe:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 14px,#aaa6 15px 16px),repeating-linear-gradient(90deg,transparent 0 20px,#aaa5 21px 22px);border-radius:50%}.globe:after{content:"";position:absolute;inset:8% 25%;border:1px solid #aaa;border-radius:50%;box-shadow:0 0 0 15px #fff0,0 0 0 16px #8885}.continent{position:absolute;inset:12% 16%;opacity:.65;background:#bdbdbd;clip-path:polygon(12% 12%,35% 3%,47% 17%,42% 29%,57% 35%,48% 49%,55% 63%,43% 79%,28% 67%,24% 47%,7% 36%);filter:contrast(0)}.globe-caption{position:absolute;bottom:8px;left:8px;right:8px;display:flex;justify-content:space-between;gap:5px;font-size:9px;color:#aaa}.canvas{width:100%;height:100%;display:block}.hero-map{position:absolute;inset:0}.map-overlay{position:absolute;left:7px;top:7px;font-size:9px;background:#050505d9;padding:3px 5px}.video-wrap{position:relative;flex:1;min-height:0;background:#000;overflow:hidden}.video-wrap iframe,.video-wrap #nasa-archive-video{width:100%;height:100%;border:0;display:block;object-fit:contain;background:#000}.video-wrap #nasa-archive-video[hidden],.video-wrap #nasa-ambient-canvas[hidden]{display:none}.video-wrap #nasa-ambient-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;background:#000}.archive-status{position:absolute;left:8px;bottom:8px;z-index:3;background:#000d;color:#aaa;font-size:9px;padding:3px 5px;pointer-events:none}.live-status-badge{position:absolute;left:10px;top:10px;z-index:4;background:#000d;border:1px solid #444;padding:5px 7px;font-size:9px;letter-spacing:.08em;color:#eee}.video-fallback{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:12px;background:#000}.video-fallback[hidden]{display:none}.video-fallback .medium{display:block;max-width:100%;text-align:center;line-height:1.4}.video-fallback button{position:relative;z-index:2;flex:none}.panel-video .footer{display:none}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:6px}.metric{border:1px solid #333;padding:7px;min-width:0}.metric b{display:block;font-size:clamp(14px,1.5vw,21px);overflow-wrap:anywhere}.metric small{font-size:9px;color:#999}.footer{font-size:9px;color:#777;border-top:1px solid #292929;padding:5px 8px}.pill{display:inline-block;border:1px solid #555;padding:2px 5px;font-size:9px;color:#ddd}.dot{display:inline-block;width:6px;height:6px;background:#eee;border-radius:50%;margin-right:5px}.bar{height:5px;background:#252525;margin-top:4px}.bar i{display:block;height:100%;background:#ddd;width:0}.sat-list{display:grid;gap:5px}.sat-item{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #252525;padding-bottom:4px;font-size:10px}.sat-item strong{font-variant-numeric:tabular-nums;white-space:nowrap}.sat-item span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.panel-globe{grid-column:1;grid-row:1}.panel-stars{grid-column:2/5;grid-row:1}.panel-weather{grid-column:5;grid-row:1}.panel-orbit{grid-column:1;grid-row:2}.panel-video{grid-column:2;grid-row:2}.panel-earthdata{grid-column:3;grid-row:2}.panel-moon{grid-column:4;grid-row:2}.panel-satellites{grid-column:5;grid-row:2}.footbar{display:flex;justify-content:space-between;gap:8px;font-size:9px;color:#777;white-space:nowrap;overflow:hidden}.footbar span{overflow:hidden;text-overflow:ellipsis}.details-dialog{width:min(680px,94vw);max-height:85dvh;background:#080808;color:#eee;border:1px solid #777;padding:0}.details-dialog::backdrop{background:#000c}.dialog-head{display:flex;align-items:center;gap:8px;padding:10px;border-bottom:1px solid #444}.dialog-head h2{font-size:13px;margin:0;flex:1}.dialog-body{padding:12px;overflow:auto;max-height:70dvh;white-space:pre-wrap;overflow-wrap:anywhere}.dialog-actions{padding:10px;border-top:1px solid #444;display:flex;justify-content:flex-end;gap:6px}.error{color:#bbb}.hide{display:none!important}
+@media(orientation:landscape) and (max-height:760px){:root{--pad:5px}.deck{gap:4px}.masthead{min-height:25px;padding-bottom:4px}.mark{height:18px}.brand{font-size:clamp(13px,2.5vh,20px)}.grid{gap:4px}.panel-head{min-height:23px;padding:4px 6px}.panel-body{padding:5px}.row,.row strong{font-size:9px}.row{gap:4px}.rows{gap:2px}.panel h2{font-size:9px;letter-spacing:.06em}.panel-globe .visual{flex:0 0 30%;min-height:65px}.panel-globe .globe{width:min(55%,100px)}.panel-globe .panel-body{padding:4px}.panel-globe .metric small{font-size:8px}.panel-weather .panel-body{padding:5px}.panel-weather .rows .row:nth-child(n+5){display:none}.panel-weather .big{font-size:clamp(18px,2.2vh,26px)}.panel-orbit .row strong{max-width:68%;font-size:8px}.panel-satellites .sat-item:nth-child(n+4){display:none}.panel-satellites .panel-body{padding:5px}.panel-satellites .big{font-size:clamp(18px,2.2vh,25px)}.panel-moon .panel-body{padding:5px}.panel-moon .visual svg{width:min(45%,105px)!important}.panel-moon .row strong{font-size:8px}.panel-video .footer{font-size:8px}.line{margin:4px 0}.metric{padding:4px}.metric b{font-size:clamp(12px,2.3vh,17px)}.footer{padding:3px 5px}.footbar{font-size:8px}.globe{width:min(75%,150px)}.actions button{padding:3px 5px;font-size:9px}}
+@media(orientation:portrait),(max-width:700px) and (min-height:621px){body{overflow:auto}.deck{height:auto;min-height:100dvh;overflow:visible}.masthead{flex-wrap:wrap}.subbrand{display:none}.grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;overflow:visible;flex:none}.panel{min-height:220px}.panel-globe{grid-column:1;grid-row:auto}.panel-stars{grid-column:2;grid-row:auto}.panel-weather{grid-column:1;grid-row:auto}.panel-orbit{grid-column:2;grid-row:auto}.panel-video{grid-column:1;grid-row:auto}.panel-earthdata{grid-column:2;grid-row:auto}.panel-moon{grid-column:1;grid-row:auto;min-height:200px}.panel-satellites{grid-column:2;grid-row:auto}.footbar{white-space:normal;flex-wrap:wrap}.visual{min-height:120px}}
+@media(max-width:420px){.brand{font-size:14px}.actions{width:100%;justify-content:flex-end}.panel{min-height:205px}.panel h2{font-size:9px}.big{font-size:22px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
+/* Readability pass: aligned telemetry, controlled truncation and monochrome hierarchy. */
+:root{--muted:#737373;--soft:#a3a3a3;--ink:#fff}
+.grid{grid-template-columns:minmax(0,1.15fr) minmax(0,.95fr) minmax(0,1.2fr) minmax(0,1.2fr) minmax(0,.9fr)}
+.panel{min-width:0}
+.panel-head h2{color:#fff}
+.kicker,.small,.metric small,.index,.globe-caption,.map-overlay,.footer,.footbar,.row span{color:#737373}
+.big,.medium,.metric b,.row strong,.sat-item strong,.status{color:#fff;font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;font-variant-numeric:tabular-nums}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;min-width:0;font-size:10px}
+.row span{flex:1 1 auto;min-width:0;font-size:10px;line-height:1.25}
+.row strong{flex:0 1 auto;min-width:0;max-width:62%;font-size:10px;text-align:right;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.2}
+.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+.metric b{white-space:nowrap;font-size:clamp(13px,1.35vw,20px)}
+#quake-place{max-width:60%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#earthdata-time{display:block;width:100%;max-width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.35}
+#solar-state,#weather-time,#iss-status,#sat-updated{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sat-item{min-width:0;align-items:baseline}
+.sat-item span{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#b3b3b3}
+.sat-item strong{flex:0 0 auto;max-width:44%;font-size:10px;text-align:right}
+.panel-moon .visual{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1fr);align-items:center;justify-items:center;gap:8px;padding:6px;min-height:0}
+.panel-moon .visual svg{display:block;width:min(100%,120px)!important;height:auto;max-height:100%;grid-column:1;grid-row:1;align-self:center}
+.panel-moon .globe-caption{position:static;grid-column:2;grid-row:1;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:8px;min-width:0;width:100%;font-size:10px;overflow-wrap:anywhere}
+#moon-illum,#moon-date{display:block;max-width:100%;white-space:normal;line-height:1.3}
+.panel-moon .panel-body{min-width:0}
+.panel-moon .row strong{max-width:60%}
+@media(orientation:landscape) and (max-height:760px){
+ .grid{grid-template-columns:minmax(0,1.15fr) minmax(0,.95fr) minmax(0,1.2fr) minmax(0,1.2fr) minmax(0,.9fr)}
+ .row{gap:5px}
+ .row span,.row strong{font-size:10px}
+ .panel-moon .visual{grid-template-columns:minmax(0,.75fr) minmax(0,1fr);gap:5px;padding:4px}
+ .panel-moon .visual svg{width:min(100%,88px)!important}
+ .panel-moon .globe-caption{font-size:9px;gap:5px}
+ .panel-moon .panel-body{padding:4px}
+ .panel-moon .row strong{max-width:64%;font-size:10px}
+ .panel-earthdata .panel-body{padding:5px}
+ #earthdata-time{font-size:9px}
+ #quake-place{max-width:58%}
+ .panel-orbit .row strong{max-width:62%;font-size:10px}
+ .panel-weather .row strong{max-width:60%;font-size:10px}
+ .panel-satellites .sat-item strong{font-size:9px}
+}
+@media(orientation:portrait),(max-width:700px) and (min-height:621px){
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .panel-moon .visual{grid-template-columns:minmax(0,.75fr) minmax(0,1fr);min-height:125px}
+ .panel-moon .visual svg{width:min(100%,110px)!important}
+ .panel-moon .globe-caption{font-size:10px}
+ .row span,.row strong{font-size:10px}
+}
+
+
+/* Final compact-layout corrections: reserve footer space and keep offline video monochrome. */
+.panel-weather{min-height:0}
+.panel-weather .panel-body{display:flex;flex-direction:column;gap:0;padding:3px 5px 2px;overflow:hidden}
+.panel-weather .kicker{font-size:8px;line-height:1.15;margin-bottom:1px}
+.panel-weather #weather-temp{font-size:clamp(17px,2vh,23px);line-height:1;margin:0 0 1px}
+.panel-weather #weather-code{font-size:clamp(11px,1.25vh,14px);line-height:1.05;margin:0}
+.panel-weather #weather-time{font-size:8px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.panel-weather .line{margin:3px 0}
+.panel-weather .rows{display:grid;gap:1px;min-height:0}
+.panel-weather .row{flex:0 0 auto;align-items:center;line-height:1.1;min-height:12px;gap:4px}
+.panel-weather .row span,.panel-weather .row strong{font-size:9px;line-height:1.1}
+.panel-weather .footer,.panel-orbit .footer,.panel-earthdata .footer,.panel-video .footer{position:relative;z-index:2;flex:0 0 auto;margin-top:auto}
+.panel-orbit .panel-body{display:flex;flex-direction:column;gap:0;padding:4px 6px 6px;overflow:hidden}
+.panel-orbit .kicker{font-size:8px;line-height:1.2;margin-bottom:2px}
+.panel-orbit #iss-alt{font-size:clamp(21px,2.5vh,29px);line-height:1;margin-bottom:2px}
+.panel-orbit #iss-status{font-size:9px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.panel-orbit .line{margin:4px 0}
+.panel-orbit .rows{display:grid;gap:2px;flex:0 0 auto}
+.panel-orbit .row{align-items:center;line-height:1.1;min-height:12px;gap:4px}
+.panel-orbit .row span,.panel-orbit .row strong{font-size:9px;line-height:1.1}
+.panel-orbit .row strong{max-width:66%}
+.panel-orbit .panel-body>.small:last-child{font-size:8px;line-height:1.1;margin-top:auto;padding-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.panel-earthdata .panel-body{display:flex;flex-direction:column;gap:0;padding:4px 6px;overflow:hidden;min-height:0}
+.panel-earthdata .metrics{flex:0 0 auto;gap:4px}
+.panel-earthdata .metric{min-width:0;padding:4px}
+.panel-earthdata .metric b{font-size:clamp(14px,1.7vh,20px);line-height:1}
+.panel-earthdata .metric small{font-size:8px;line-height:1.15}
+.panel-earthdata .line{flex:0 0 auto;margin:3px 0}
+.panel-earthdata .row{flex:0 0 auto;align-items:center;gap:4px;line-height:1.1;min-height:12px}
+.panel-earthdata .row span,.panel-earthdata .row strong{font-size:9px;line-height:1.1}
+.panel-earthdata .row strong{max-width:66%}
+.panel-earthdata #earthdata-time{flex:0 1 auto;min-height:0;margin-top:auto;padding-top:3px;font-size:8px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.panel-earthdata .footer{padding:4px 5px;font-size:8px;line-height:1.1;white-space:nowrap;overflow:hidden}
+.panel-earthdata .footer a{white-space:nowrap}
+.panel-video .video-wrap{position:relative;flex:1 1 auto;min-height:0;overflow:hidden;background:#000}
+.panel-video #nasa-video{display:block;width:100%;height:100%;border:0;background:#000}
+.panel-video .video-fallback{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:9px;padding:12px;background:#000;color:#fff;z-index:3;text-align:center}.panel-video .video-fallback:before{content:"[ STREAM OFFLINE / WAITING FOR SIGNAL ]";display:block;padding:8px;border:1px solid #444;background:#000;color:#aaa;font:10px/1.4 "SFMono-Regular",Consolas,monospace;letter-spacing:.08em}.panel-video .video-fallback .medium,.panel-video .video-fallback .small{display:none}.panel-video .video-fallback button{background:#000;border-color:#666;font-size:9px}
+.panel-video .video-fallback[hidden]{display:none!important}
+.panel-video .video-fallback .medium{font-size:clamp(11px,1.2vw,15px);letter-spacing:.08em;color:#fff}
+.panel-video .video-fallback .small{font-size:9px;color:#737373}
+.panel-video .video-fallback:before{content:"SIGNAL OFFLINE / RECONNECTING";display:block;padding:5px 7px;border:1px solid #444;background:#000;color:#aaa;font:9px/1.2 "SFMono-Regular",Consolas,monospace;letter-spacing:.07em}
+.panel-video .video-fallback a{font-size:9px;color:#fff}
+@media(orientation:landscape) and (max-height:760px){
+ .panel-weather .panel-body{padding:2px 4px 1px}
+ .panel-weather #weather-temp{font-size:clamp(16px,2vh,21px)}
+ .panel-weather .row span,.panel-weather .row strong{font-size:9px}
+ .panel-weather .footer{padding:3px 4px;font-size:8px;line-height:1}
+ .panel-orbit .panel-body{padding:3px 5px 5px}
+ .panel-orbit .kicker{font-size:8px}
+ .panel-orbit .row span,.panel-orbit .row strong{font-size:9px}
+ .panel-orbit .footer{padding:3px 4px;font-size:8px}
+ .panel-earthdata .panel-body{padding:3px 5px}
+ .panel-earthdata .row span,.panel-earthdata .row strong{font-size:9px}
+ .panel-earthdata .footer{padding:3px 4px;font-size:7px;letter-spacing:-.02em}
+ .panel-earthdata .metric{padding:3px}
+ .panel-earthdata .line{margin:2px 0}
+ .panel-video .footer{padding:3px 4px;font-size:8px}
+}
+
+/* 06 panel tab-switches among original Earth data and widgets 09–11. */
+.panel-earthdata .monitor-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;padding:4px 5px;border-bottom:1px solid #303030;flex:0 0 auto}
+.monitor-tab{min-width:0;padding:4px 2px!important;background:#080808!important;border:1px solid #333!important;color:#737373!important;font:8px/1.1 "SFMono-Regular",Consolas,monospace!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.monitor-tab.is-active{color:#fff!important;border-color:#aaa!important;background:#171717!important}
+.panel-earthdata .monitor-view{display:flex;flex:1 1 0;flex-direction:column;min-height:0;overflow:hidden}
+.panel-earthdata .monitor-view[hidden]{display:none!important}
+.panel-earthdata .monitor-view .panel-body{flex:1 1 0;min-height:0}
+.panel-earthdata .monitor-view .footer{flex:0 0 auto;margin-top:auto}
+.solar-bar{height:7px;border:1px solid #444;background:linear-gradient(90deg,#333 0 33.333%,#777 33.333% 66.666%,#ddd 66.666% 100%);margin:7px 0;position:relative;flex:0 0 auto}
+.solar-bar i{position:absolute;left:0;top:-3px;width:2px;height:11px;background:#fff;box-shadow:0 0 0 1px #000;transform:translateX(-1px)}
+.fire-list{display:grid;gap:5px;min-height:0;overflow:hidden}
+.fire-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;align-items:start;border-bottom:1px solid #292929;padding-bottom:4px;font:9px/1.25 "SFMono-Regular",Consolas,monospace}
+.fire-row span{min-width:0;overflow-wrap:anywhere;color:#aaa}.fire-row strong{max-width:100%;font:9px/1.2 "SFMono-Regular",Consolas,monospace;color:#fff;text-align:right;white-space:nowrap}
+.monitor-updated{margin-top:auto;padding-top:4px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:8px}
+@media(orientation:landscape) and (max-height:760px){.panel-earthdata .monitor-tabs{padding:3px 4px;gap:2px}.monitor-tab{font-size:7px!important;padding:3px 1px!important}.panel-earthdata .monitor-view .panel-body{padding:3px 5px}.panel-earthdata .monitor-view .footer{padding:3px 4px;font-size:7px}.solar-bar{margin:5px 0}.fire-list{gap:3px}.fire-row{font-size:8px;padding-bottom:3px}.fire-row strong{font-size:8px}}
+
+
+/* Landscape overflow repair: keep footers in their own row and make dense telemetry readable. */
+@media(orientation:landscape) and (max-height:760px){
+ .panel-weather .footer{display:flex;flex-wrap:wrap;align-items:center;gap:3px 7px;white-space:normal!important;line-height:1.2!important;min-height:25px;padding:4px 5px!important;overflow:visible!important}
+ .panel-weather .footer a{display:inline-block;white-space:normal!important;overflow-wrap:anywhere;max-width:100%}
+ .panel-weather .panel-body{min-height:0}
+ .panel-orbit .panel-body{overflow-y:auto;scrollbar-width:thin;scrollbar-color:#444 #090909}
+ .panel-orbit .panel-body::-webkit-scrollbar{width:3px}
+ .panel-orbit .panel-body::-webkit-scrollbar-thumb{background:#444}
+ .panel-earthdata .panel-body{overflow-y:auto;scrollbar-width:thin;scrollbar-color:#444 #090909}
+ .panel-earthdata .panel-body::-webkit-scrollbar{width:3px}
+ .panel-earthdata .panel-body::-webkit-scrollbar-thumb{background:#444}
+ #earthdata-time,#solar-state{white-space:normal!important;overflow-wrap:anywhere;line-height:1.2;max-width:100%}
+ #quake-place{white-space:normal!important;overflow-wrap:anywhere;max-width:62%!important}
+ .panel-earthdata .row{align-items:flex-start}
+ .panel-earthdata .row strong{overflow-wrap:anywhere;white-space:normal}
+}
+@media(orientation:landscape) and (max-height:600px){
+ .panel-weather .footer{font-size:7px!important;min-height:22px}
+ .panel-orbit .panel-body,.panel-earthdata .panel-body{padding-bottom:5px}
+}
+
+
+/* Ambient public NASA footage in panels 01/02; CSS fallbacks remain if the media API is unavailable. */
+.ambient-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#050505;filter:grayscale(1) contrast(1.08) brightness(.68);opacity:0;transition:opacity .45s ease}
+.ambient-video.is-ready{opacity:.9}
+.earth-video-visual .ambient-video{object-position:center}.panel-globe .visual{padding-bottom:18px}.panel-globe .footer{position:relative;z-index:3;flex:0 0 auto;margin-top:0;background:#090909}.earth-video-visual .video-label,.space-video-visual .map-overlay{display:none!important}.earth-video-visual{background:radial-gradient(ellipse at 50% 48%,#171717 0,#090909 58%,#030303 100%)}.space-video-visual{background:radial-gradient(ellipse at 50% 35%,#141414 0,#080808 62%,#020202 100%)}
+.earth-video-visual .globe{position:absolute;width:min(76%,175px);z-index:1;opacity:.48;transition:opacity .35s ease}
+.earth-video-visual.has-video .globe{opacity:0}
+.earth-video-visual .video-label{position:absolute;top:7px;left:7px;z-index:2;padding:3px 5px;background:#050505c9;color:#aaa;font:8px/1.2 "SFMono-Regular",Consolas,monospace;letter-spacing:.08em}
+.space-video-visual .hero-map{z-index:1;opacity:.42;transition:opacity .35s ease}
+.space-video-visual.has-video .hero-map{opacity:.12}
+.space-video-visual .map-overlay,.space-video-visual .globe-caption{z-index:2}
+@media(prefers-reduced-motion:reduce){.ambient-video{transition:none}}
+/* Status stays green while the browser is connected; data availability remains explicit. */
+.status.is-connected{color:#8ee6a0!important}
+.status.is-offline{color:#ff8a8a!important}
+.status .status-detail{color:#737373}
+
+
+/* Reserve a visible gap above fixed panel footers; wrap long NOAA and quake values. */
+.panel-orbit .panel-body{padding-bottom:10px!important}
+.panel-orbit .rows{margin-bottom:10px;padding-bottom:5px}.panel-orbit .panel-body{gap:3px;padding-bottom:18px!important}.panel-orbit .footer{margin-top:auto;padding-top:6px}
+.panel-orbit .rows .row:last-child{margin-bottom:4px}
+.panel-earthdata .monitor-view .panel-body{padding-bottom:8px!important}
+.panel-earthdata .row strong{max-width:64%;white-space:normal;overflow-wrap:anywhere;word-break:normal}
+.panel-earthdata #earthdata-time{white-space:normal!important;overflow-wrap:anywhere;max-width:100%}
+.panel-earthdata .monitor-view .panel-body{display:flex;flex-direction:column;justify-content:space-between;gap:4px;padding-bottom:16px!important}.panel-earthdata .monitor-view .panel-body>.line:last-of-type{margin-top:auto}.panel-earthdata .monitor-view .footer{position:relative;z-index:3;background:#080808;flex:0 0 auto;margin-top:0;padding-top:6px}
+
+
+/* Last-mile telemetry spacing: keep footer outside the scrollable measurement body. */
+.panel-orbit .panel-body{min-height:0;overflow-y:auto!important;padding-bottom:14px!important;scrollbar-width:thin}
+.panel-orbit .rows{padding-bottom:7px!important}
+.panel-earthdata .monitor-view .panel-body{min-height:0;overflow-y:auto!important;padding-bottom:14px!important;scrollbar-width:thin}
+.panel-earthdata #solar-state,.panel-earthdata #earthdata-time{max-width:100%;overflow-wrap:anywhere;white-space:normal!important}
+.panel-earthdata .monitor-view .footer,.panel-orbit .footer{flex-shrink:0!important;position:relative!important;background:#090909;z-index:4}
+
+#sat-count{font-variant-numeric:tabular-nums}
+
+/* Operator onboarding and contextual glossary */
+#help-open{border-color:#666;color:#fff}
+.term-help{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;padding:0;margin:0 2px;border:1px solid #555;border-radius:50%;font-size:9px;line-height:1;color:#ddd;vertical-align:middle}
+.term{white-space:normal}
+.intro-overlay{position:fixed;inset:0;z-index:1000;background:#000d;display:grid;place-items:center;padding:16px}
+.intro-overlay[hidden],.term-popover[hidden]{display:none}
+.intro-card{width:min(520px,100%);background:#080808;border:1px solid #888;box-shadow:0 0 0 1px #222;padding:clamp(18px,4vw,30px);font-family:inherit}
+.intro-kicker{font-size:9px;letter-spacing:.12em;color:#888}
+.intro-card h2{font-size:clamp(17px,3vw,24px);letter-spacing:.08em;margin:12px 0}
+.intro-card p{color:#ccc;line-height:1.7;min-height:3em}
+.intro-progress{color:#888;font-size:10px;border-top:1px solid #333;padding-top:12px}
+.intro-actions{display:flex;justify-content:space-between;gap:8px;margin-top:16px}
+.intro-actions button:last-child,.dialog-actions button{border-color:#aaa}
+.panel.onboarding-target{outline:2px solid #fff!important;outline-offset:2px;z-index:20;box-shadow:0 0 0 5px #fff2}
+.term-popover{position:fixed;z-index:1100;left:50%;bottom:18px;transform:translateX(-50%);width:min(360px,calc(100vw - 24px));padding:15px 38px 15px 15px;background:#080808;border:1px solid #777;box-shadow:0 8px 30px #000;font-size:11px}
+.term-popover strong{color:#fff;letter-spacing:.08em}.term-popover p{color:#bbb;line-height:1.6;margin:8px 0 0}
+#term-close{position:absolute;right:6px;top:6px;padding:2px 7px}
+.help-dialog{width:min(760px,calc(100vw - 24px));max-height:min(80dvh,720px)}
+.help-entry{padding:9px 0;border-bottom:1px solid #292929}.help-entry strong{display:block;color:#fff;font-size:11px}.help-entry p{margin:4px 0 0;color:#aaa;font-size:10px;line-height:1.6}
+@media(max-width:650px){#help-open{font-size:9px!important;padding:5px}.intro-card{padding:18px}}
+.language-switch{display:inline-flex;border:1px solid #444;gap:0}.language-switch button{border:0;border-right:1px solid #333;padding:5px 6px;background:#080808;color:#888;font:10px inherit;min-width:25px}.language-switch button[aria-pressed="true"]{color:#fff;background:#262626;box-shadow:inset 0 -2px #fff}@media(max-width:420px){.language-switch button{min-width:22px;padding:4px}}
+
+.grid{grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(0,.85fr)}
+.panel-cameras{grid-column:1/6;grid-row:3;min-height:0}
+.panel-cameras .panel-head{justify-content:space-between;flex-wrap:nowrap}
+#rotate-cams{font-size:9px;padding:4px 6px;white-space:nowrap}
+.camera-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:minmax(0,1fr);gap:5px;flex:1;min-height:0;padding:5px}
+.camera-cell{position:relative;display:block;min-width:0;min-height:0;overflow:hidden;border:1px solid #343434;background:#050505;color:#fff;text-decoration:none}
+.camera-cell img,.camera-cell video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(100%) contrast(125%);background:#050505}.camera-cell{background:repeating-linear-gradient(0deg,#0b0b0b 0 2px,#050505 2px 4px),radial-gradient(ellipse at center,#171717,#030303)}
+.camera-cell .camera-no-signal{position:absolute;inset:0;display:block;background:radial-gradient(ellipse at 50% 40%,#171717 0,#090909 55%,#030303 100%),repeating-linear-gradient(0deg,transparent 0 2px,#ffffff05 2px 4px);color:transparent;font-size:0;letter-spacing:0;pointer-events:none}
+.camera-overlay{position:absolute;left:0;right:0;top:0;padding:5px 5px 20px;background:linear-gradient(#000f,#000b 70%,transparent);display:flex;flex-direction:column;gap:2px;font-size:9px;text-shadow:0 1px 2px #000;pointer-events:none}
+.camera-overlay strong{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.camera-overlay span{color:#b0b0b0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.camera-timestamp{position:absolute;left:5px;bottom:5px;z-index:2;font-size:7px;color:#888;background:#000d;padding:2px 4px;border:1px solid #292929;pointer-events:none}.panel-cameras .footer{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.panel-cameras .footer span{margin-right:8px}.panel-cameras .footer a{margin-left:2px}
+.camera-state{position:absolute;right:5px;bottom:5px;background:#000c;border:1px solid #555;padding:2px 4px;font-size:8px;letter-spacing:.08em}
+.camera-modal{position:fixed;inset:0;z-index:10000;background:#000e;display:none;align-items:center;justify-content:center;padding:16px}
+.camera-modal.is-open{display:flex}
+.camera-modal-dialog{width:min(1100px,96vw);height:min(82dvh,760px);background:#050505;border:1px solid #666;display:flex;flex-direction:column;min-height:0}
+.camera-modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px;border-bottom:1px solid #333}
+.camera-modal-screen{position:relative;flex:1;min-height:0;background:#000}
+.camera-modal-screen img,.camera-modal-screen video{width:100%;height:100%;object-fit:contain;filter:grayscale(100%) contrast(125%)}.camera-modal-screen .camera-archive-video{position:absolute;inset:0;background:#000}.camera-modal-screen .camera-no-signal.archive-label{inset:auto auto 12px 12px;background:#000d;border:1px solid #555;padding:5px 8px;color:#ddd;z-index:2;font-size:9px;place-items:start}
+.camera-modal-screen .camera-no-signal{position:absolute;inset:0;display:grid;place-items:center;color:#888;font-size:11px;letter-spacing:.08em;text-align:center;padding:12px;pointer-events:none}.camera-offline-badge{position:absolute;left:12px;bottom:12px;z-index:4;background:#000e;border:1px solid #444;padding:7px 9px;color:#ddd;font:10px monospace;letter-spacing:.08em;pointer-events:none}
+@media(orientation:landscape) and (max-height:760px){.grid{grid-template-rows:minmax(0,.85fr) minmax(0,.9fr) minmax(0,.8fr)}.panel-cameras .panel-head{min-height:22px;padding:3px 6px}.camera-grid{gap:4px;padding:4px}.camera-overlay{padding:3px;font-size:8px}.camera-overlay strong{font-size:9px}.camera-state{font-size:7px}.panel-cameras .footer{padding:3px 5px}}
+@media(max-width:700px){.panel-cameras{grid-column:1/3;grid-row:auto;min-height:250px}.camera-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}.grid{grid-template-rows:none}.panel-cameras .panel-head h2{font-size:9px}}
+@media(orientation:landscape) and (min-width:701px){.camera-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+
+/* Final text-overlap fixes: Earth footer, ISS telemetry, video fallback and camera overlays. */
+.panel-globe .visual{padding-bottom:30px!important}
+.panel-globe .visual .globe{transform:translateY(-8px)}
+.panel-globe .globe-caption{bottom:10px}
+.panel-globe>.footer{position:relative;z-index:4;flex:0 0 auto;margin-top:0;padding:5px 7px;background:#090909;line-height:1.2}
+.panel-orbit .panel-body{display:flex;flex:1 1 0;min-height:0;flex-direction:column;justify-content:space-between;gap:5px;padding:5px 6px 8px;overflow:hidden}
+.panel-orbit .panel-body>.kicker,.panel-orbit #iss-alt,.panel-orbit #iss-status,.panel-orbit .line,.panel-orbit .rows,.panel-orbit .panel-body>.small:last-child{flex:0 0 auto}
+.panel-orbit .rows{gap:3px}
+.panel-orbit .panel-body>.small:last-child{margin-top:auto;padding-top:4px;padding-bottom:10px}
+.panel-orbit>.footer{flex:0 0 auto;margin-top:0;padding:5px 7px;line-height:1.2}
+.panel-video .video-fallback{background:#000!important;gap:12px;justify-content:center;align-items:center}
+.panel-video .video-fallback:before{content:"[ SIGNAL OFFLINE ]"!important;display:block;padding:7px 10px;border:1px solid #444;background:#000;color:#aaa;font:9px/1.3 "SFMono-Regular",Consolas,monospace;letter-spacing:.08em}
+.panel-video .video-fallback .medium,.panel-video .video-fallback .small{display:none!important}
+.panel-video .video-fallback a{display:none!important}
+.panel-video .video-fallback button{margin:0;background:#000;border:1px solid #777;padding:8px 12px;font-size:9px}
+.camera-overlay{left:4px;right:auto;top:4px;max-width:calc(100% - 8px);padding:3px 5px!important;gap:2px;background:#000d!important;z-index:2}
+.camera-overlay strong{display:block;max-width:100%;font-size:8px!important;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.camera-overlay .camera-coordinates{display:block;max-width:100%;font-size:8px;line-height:1.15;color:#ddd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.camera-timestamp{left:4px;bottom:4px;max-width:calc(100% - 105px);font-size:7px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:3}
+.camera-state{right:4px;bottom:4px;z-index:4;max-width:calc(100% - 105px);font-size:7px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.panel-cameras>.footer{display:flex;align-items:center;gap:16px!important;column-gap:16px!important;row-gap:6px;flex-wrap:wrap;padding:5px 8px}
+.panel-cameras>.footer span{margin:0 8px 0 0;flex:0 0 auto}
+.panel-cameras>.footer a{margin:0 0 0 4px;flex:0 0 auto;white-space:nowrap}
+@media(orientation:landscape) and (max-height:760px){.panel-globe .visual{padding-bottom:26px!important}.panel-orbit .panel-body{padding-bottom:7px}.panel-orbit .panel-body>.small:last-child{padding-bottom:8px}.panel-orbit>.footer{padding:4px 5px}.camera-overlay{top:3px;left:3px}.camera-timestamp,.camera-state{bottom:3px}.panel-cameras>.footer{gap:16px!important;padding:4px 6px}}
+@media(max-width:700px){.panel-cameras>.footer{gap:12px!important}.camera-overlay strong{font-size:9px!important}.camera-overlay .camera-coordinates{font-size:8px}}
+/* Fullscreen ISS media and portrait layout corrections */
+.iss-live-modal{position:fixed;inset:0;z-index:20000;display:none;background:#000}.iss-live-modal.is-open{display:block}
+.iss-live-modal .iss-player,.iss-live-modal .iss-fallback{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;object-fit:cover}.iss-live-modal .iss-fallback[hidden]{display:none!important}
+.iss-live-modal .iss-close{position:absolute;right:max(12px,env(safe-area-inset-right));top:max(12px,env(safe-area-inset-top));z-index:4;background:#050505e8;border:1px solid #888;padding:9px 12px;font-size:11px;letter-spacing:.08em}
+.iss-live-modal .iss-badge{position:absolute;left:max(12px,env(safe-area-inset-left));top:max(12px,env(safe-area-inset-top));z-index:4;background:#050505e8;border:1px solid #666;padding:8px 10px;font-size:10px;letter-spacing:.09em;pointer-events:none}
+.camera-cell .camera-ambient{position:absolute;inset:0;width:100%;height:100%;display:block;background:#050505}.camera-modal{padding:0}.camera-modal-dialog{width:100vw;height:100dvh;max-width:none;max-height:none;border:0}
+.camera-modal-head{position:absolute;top:0;left:0;right:0;z-index:5;background:linear-gradient(#000e,transparent);border:0;padding:12px}.camera-modal-head strong{display:none}.camera-modal-head button{margin-left:auto}
+.camera-modal-screen{width:100%;height:100%;flex:1}.camera-modal-screen img,.camera-modal-screen video{object-fit:cover;filter:grayscale(100%) contrast(125%)}
+@media(orientation:portrait),(max-width:700px){body{overflow:auto}.deck{height:auto;min-height:100dvh;overflow:visible;display:flex;flex-direction:column}.grid{display:flex;flex-direction:column;overflow:visible;flex:none;min-height:0}.panel{flex:0 0 auto;min-height:220px}.panel-stars{min-height:260px}.panel-cameras{min-height:340px}.camera-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(150px,1fr));flex:none;min-height:310px;overflow:visible}.panel-cameras .panel-body{overflow:visible}.footbar{white-space:normal;flex-wrap:wrap}.camera-modal-head{padding-top:max(12px,env(safe-area-inset-top))}.iss-live-modal .iss-badge{font-size:9px}}
+
+/* Final responsive rules: keep data, captions and controls separated. */
+.panel-weather .panel-body{
+  gap: 3px !important;
+  padding: 7px 6px 8px !important;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.panel-weather #weather-code{
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  margin-bottom: 3px;
+}
+.panel-weather #weather-time{
+  line-height: 1.25;
+  margin-top: 2px;
+}
+.panel-weather > .footer{
+  flex: 0 0 auto;
+  margin-top: 5px !important;
+  padding: 7px 6px 6px !important;
+  line-height: 1.35;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.panel-weather > .footer a{
+  display: inline-block;
+  margin: 1px 0;
+}
+.panel-stars > .footer{
+  padding: 7px 8px 8px !important;
+  line-height: 1.35;
+}
+.panel-orbit > .footer{
+  margin-top: 5px !important;
+  padding-top: 6px;
+  line-height: 1.35;
+}
+.panel-earthdata .monitor-tabs{
+  gap: 2px;
+  padding: 3px 5px;
+}
+.panel-earthdata .monitor-tab{
+  min-width: 0;
+  padding: 4px 3px;
+  font-size: 9px;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+.panel-earthdata .monitor-view .metrics{
+  margin-top: 2px;
+}
+@media (orientation: landscape) and (max-height: 760px){
+  .panel-weather .panel-body{padding: 5px 5px 6px !important;gap: 2px !important}
+  .panel-weather > .footer{padding: 5px !important;margin-top: 3px !important;font-size: 8px}
+  .panel-stars > .footer{padding: 5px 6px 6px !important}
+  .panel-orbit > .footer{margin-top: 3px !important;padding-top: 4px}
+  .panel-earthdata .monitor-tabs{padding: 2px 4px;gap: 2px}
+  .panel-earthdata .monitor-tab{font-size: 7px;padding: 3px 1px;letter-spacing: 0}
+}
