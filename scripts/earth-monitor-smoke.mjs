@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import vm from "node:vm";
 
 const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
+const css = await readFile(new URL("../styles.css", import.meta.url), "utf8");
 assert.ok(html.includes("<title>PLANET EARTH CONTROL DECK</title>"), "dashboard title missing");
 const panelIds = [...html.matchAll(/data-panel="([^"]+)"/g)].map(match => match[1]).filter(id => !id.includes("'+"));
 assert.deepEqual(panelIds, ["earth", "stars", "weather", "orbit", "video", "earthdata", "spaceweather", "moon", "satellites", "radar", "anomalies", "cameras"], "dashboard panel set changed");
