@@ -5,7 +5,7 @@ import vm from "node:vm";
 const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
 assert.ok(html.includes("<title>PLANET EARTH CONTROL DECK</title>"), "dashboard title missing");
 const panelIds = [...html.matchAll(/data-panel="([^"]+)"/g)].map(match => match[1]).filter(id => !id.includes("'+"));
-assert.deepEqual(panelIds, ["earth", "stars", "weather", "orbit", "video", "earthdata", "moon", "satellites", "cameras"], "dashboard panel set changed");
+assert.deepEqual(panelIds, ["earth", "stars", "weather", "orbit", "video", "earthdata", "moon", "satellites", "radar", "cameras"], "dashboard panel set changed");
 const idList = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
 assert.equal(new Set(idList).size, idList.length, "duplicate HTML ids found");
 const script = await readFile(new URL("../app.js", import.meta.url), "utf8");
@@ -17,6 +17,9 @@ assert.deepEqual([...new Set(refs.filter(id => !idList.includes(id)))], [], "run
 for (const endpoint of ["api.open-meteo.com/v1/forecast","air-quality-api.open-meteo.com/v1/air-quality","api.wheretheiss.at/v1/satellites/25544","earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson","eonet.gsfc.nasa.gov/api/v3/events","services.swpc.noaa.gov/json/planetary_k_index_1m.json","celestrak.org/NORAD/elements/gp.php?GROUP=STATIONS&FORMAT=JSON","verkehr.autobahn.de/o/autobahn/"]) assert.ok(script.includes(endpoint), "missing data source: "+endpoint);
 assert.ok(html.includes('id="earth-ambient-video" autoplay muted loop playsinline') && html.includes('id="space-ambient-video" autoplay muted loop playsinline'), "ambient video elements missing");
 assert.ok(html.includes('id="iss-live-modal"') && html.includes('id="iss-modal-live-player"') && html.includes('id="iss-modal-fallback-video"') && html.includes('[ ISS LIVE STREAM // ACTIVE ]') && html.includes('[ CLOSE X ]'), "ISS fullscreen modal missing");
+assert.ok(html.includes('id="air-radar-canvas"') && html.includes('id="air-count"') && html.includes('id="air-nearest"') && html.includes('data-panel="radar"'), "airspace radar widget missing");
+assert.ok(script.includes("https://opensky-network.org/api/states/all?") && script.includes("function fallbackTraffic()") && script.includes("SIMULATED FALLBACK"), "OpenSky integration/fallback missing");
+assert.ok(script.includes("function renderTable()") && script.includes("function renderDrilldown()") && script.includes("AIRCRAFT IN REGION"), "airspace drill-down table missing");
 assert.ok(html.includes('id="camera-grid"') && html.includes('id="rotate-cams"') && script.includes("function loadRegionalCameraFeeds()") && script.includes("function startCameraAmbient("), "regional camera integration/fallback missing");
 assert.ok(script.includes("setInterval(loadRegionalCameraFeeds,60000)") && script.includes("camera-timestamp") && !script.includes("STANDBY · CAM") && !script.includes("LIVE OFFLINE · NO ARCHIVE CLIP FOUND"), "camera refresh/layout/fallback status missing");
 assert.ok(script.includes("function setLanguage(code") && script.includes("camTitle") && script.includes("rotateCams"), "localization missing");
