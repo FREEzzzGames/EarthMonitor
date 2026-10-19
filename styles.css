@@ -733,3 +733,11 @@ button,a,input,.panel,.strategic-dialog{border-radius:0!important}
 
 /* Honest live-camera failure state: never replace a failed source with generated footage. */
 .camera-offline-state{display:flex;align-items:center;justify-content:center;min-height:100%;width:100%;padding:1rem;background:#08090b;color:#aeb6bf;border:1px solid #343a40;text-align:center;font:600 .72rem/1.5 "Space Mono",monospace;letter-spacing:.08em;text-transform:uppercase;}
+
+/* Final touch target normalization: interactive controls are never smaller than 48px. */
+button,[role="button"],input[type="button"],input[type="submit"],summary{min-width:48px;min-height:48px;touch-action:manipulation}
+a.strategic-source-link,.strategic-module-button,.strategic-dialog-head button{min-width:48px;min-height:48px}
+.term-help{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;min-width:48px;min-height:48px;padding:0;border-radius:0!important;vertical-align:middle}
+.strategic-transit-row{display:grid;gap:4px;padding:9px 0;border-bottom:1px solid #262626;min-width:0}
+.strategic-transit-row strong,.strategic-transit-row span{overflow-wrap:anywhere;font-size:11px;line-height:1.5}
+.strategic-transit-row span{color:#aaa}
