@@ -39,6 +39,6 @@ The 4×2 home-screen widget refreshes public data independently of the WebView a
 
 ## Data and limitations
 
-The dashboard consumes public endpoints from Open-Meteo, WhereTheISS.at, USGS, NASA EONET, NOAA SWPC, CelesTrak, NASA's media API and the public Autobahn webcam API. Availability and embedding rules vary by source. Regional camera tiles show standby when no usable feed is available. Public live data and video need an internet connection.
+The dashboard consumes public endpoints from Open-Meteo, WhereTheISS.at, USGS, NASA EONET, NOAA SWPC, CelesTrak, NASA's media API, PEGELONLINE, NASA/JPL CNEOS, Launch Library 2, Safecast, Cloudflare DNS-over-HTTPS and the public Autobahn webcam API. Availability and browser CORS rules vary. LightningMaps and Cloudflare Radar are external dashboards rather than embedded global strike/network APIs. DNS timing measures client-to-Cloudflare DoH request latency, not ICMP ping to root servers. The regional water module shows PEGELONLINE current measurements where available and links to official LUBW Enz/Nagold gauge pages; these are distinct data systems. Camera tiles use live highway camera images when available; archive/animated fallback is not live CCTV. Public live data and video need an internet connection.
 
 EarthMonitor is an independent project; it is not coupled to the FREEzzzGames/Base portal.
