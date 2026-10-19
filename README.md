@@ -1,34 +1,44 @@
 # EarthMonitor
 
-**Planet Earth Control Deck** — a standalone public-data dashboard for web and Android.
+**Planet Earth Control Deck** — a public-data dashboard for web and Android, built from one HTML/CSS/JavaScript source and packaged for Android with Capacitor.
 
 ## Web
 
-The complete dashboard is self-contained in `index.html` (HTML, CSS, JavaScript, localization, public-data adapters, video fallbacks, regional camera grid and interactions). No frontend framework or build step is required.
+- Source dashboard: `index.html`
+- Public deployment: https://freezzzgames.github.io/EarthMonitor/
+- Validation: `npm test` or `node scripts/earth-monitor-smoke.mjs`
+- GitHub Pages workflow validates the standalone dashboard and publishes it.
 
-- Local preview: `python -m http.server 8080`, then open `http://localhost:8080`.
-- Public URL after GitHub Pages deployment: https://freezzzgames.github.io/EarthMonitor/
-- Smoke test: `node scripts/earth-monitor-smoke.mjs`.
+## Capacitor Android
 
-## Android
+Android uses Capacitor's native bridge and packages a local copy of the dashboard in the APK. It no longer navigates to the hosted GitHub Pages URL at launch. The dashboard shell is therefore available offline; live feeds, remote imagery, video streams and camera sources still require internet.
 
-The `android/` folder contains a native Android WebView shell that opens the same hosted dashboard. The WebView enables JavaScript, DOM storage and muted media autoplay; it uses hardware acceleration and landscape orientation for the instrument-panel layout.
+Requirements: Node.js 22, JDK 17, Android SDK, Gradle 8.13.
 
-- Build locally: `gradle -p android assembleDebug`.
-- The Android workflow builds a debug APK and publishes it as an Actions artifact.
+```bash
+npm install
+npm test
+npm run build
+npx cap sync android
+gradle -p android assembleDebug --no-daemon
+```
 
-The app currently loads the hosted web application; first launch requires an internet connection. This keeps web and Android on the same source of truth rather than maintaining separate UI implementations.
+Open Android Studio with `npx cap open android`. Capacitor config is in `capacitor.config.ts`; `scripts/build-web.mjs` stages `index.html` into `www/` before sync.
 
-## Data sources and limitations
+The native Android project retains the App Widgets API implementation:
+- `android/app/src/main/java/com/freezzz/earthmonitor/EarthMonitorWidgetProvider.java`
+- `android/app/src/main/res/layout/widget_earth_monitor.xml`
+- `android/app/src/main/res/xml/earth_monitor_widget_info.xml`
 
-The dashboard consumes public endpoints from Open-Meteo, WhereTheISS.at, USGS, NASA EONET, NOAA SWPC, CelesTrak, NASA's media API and the public Autobahn webcam API. Availability and browser embedding rules vary. No API keys are embedded in client code. Calculated visualizations are not presented as direct sensor measurements; regional camera frames appear only when the public API returns usable image URLs.
+The 4×2 home-screen widget refreshes public data independently of the WebView and opens the app from its launch action. It uses WhereTheISS.at, Open-Meteo, NOAA SWPC and USGS public endpoints; no API keys are embedded.
 
-## Project structure
+## Icon and logo
 
-- `index.html` — complete standalone dashboard.
-- `scripts/earth-monitor-smoke.mjs` — structural and JavaScript syntax checks.
-- `android/` — Android WebView app.
-- `.github/workflows/pages.yml` — validation and GitHub Pages deployment.
-- `.github/workflows/android-apk.yml` — APK build workflow.
+- SVG source: `assets/earth-monitor-logo.svg`
+- Adaptive icon XML: `android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml`
 
-EarthMonitor is independent of the FREEzzzGames/Base portal repository.
+## Data and limitations
+
+The dashboard consumes public endpoints from Open-Meteo, WhereTheISS.at, USGS, NASA EONET, NOAA SWPC, CelesTrak, NASA's media API and the public Autobahn webcam API. Availability and embedding rules vary by source. Regional camera tiles show standby when no usable feed is available. Public live data and video need an internet connection.
+
+EarthMonitor is an independent project; it is not coupled to the FREEzzzGames/Base portal.
