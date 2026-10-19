@@ -61,14 +61,11 @@ function openModule(id){
  if(id==="niche-telemetry"){openDedicated("niche-telemetry-dialog",'[data-niche-select="aircraft"]');return}
  if(id==="deep-telemetry"){openDedicated("deep-telemetry-dialog",'[data-deep-select="dsn"]');return}
  if(id==="transport"){const p=$("strategic-dialog-content");p.replaceChildren();const note=document.createElement("p");note.className="strategic-source-note";note.textContent="Loading current public departures…";p.append(note);loadTransport(p);return}
- const panelId=id==="airquality"?"earthdata":id;
+ const panelId=id==="airquality"?"weather":id;
  const panel=document.querySelector('#source-library [data-panel="'+panelId+'"]');
- if(!panel){const p=document.createElement("p");p.className="strategic-source-note";p.textContent="MODULE UNAVAILABLE · no matching panel is registered in this build."; $("strategic-dialog-content").replaceChildren(p);return}
- const expand=panel.querySelector("[data-expand]");
- if(expand){strategic?.close();expand.click();return}
- const content=$("strategic-dialog-content");content.replaceChildren();
- const h=document.createElement("h3");h.textContent=panel.querySelector("h2")?.textContent||panelId;content.append(h);
- const note=document.createElement("p");note.className="strategic-source-note";note.textContent="This source has no interactive detail handler in the current build. No measurements are synthesized.";content.append(note);
+ if(!panel){const p=document.createElement("p");p.className="strategic-source-note";p.textContent="MODULE UNAVAILABLE · no data panel is registered for this module."; $("strategic-dialog-content").replaceChildren(p);return}
+ strategic?.close();
+ document.dispatchEvent(new CustomEvent("earthmonitor:panel-request",{detail:{id:panelId}}));
 }
 document.querySelectorAll("[data-strategic-open]").forEach(b=>b.addEventListener("click",()=>{const d=$("strategic-dialog");if(!d.open)d.showModal();openGroup(b.dataset.strategicOpen)}));
 $("strategic-dialog-close")?.addEventListener("click",()=>$("strategic-dialog").close());
