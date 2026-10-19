@@ -104,16 +104,10 @@
     document.addEventListener("pointerup", release, {passive:true});
     document.addEventListener("pointercancel", release, {passive:true});
   }
-  document.addEventListener("click", event => {
-    const trigger = event.target.closest("[data-help-term]");
-    if (trigger) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      openTerm(trigger.dataset.helpTerm);
-      return;
-    }
-    if (event.target.closest("#term-close")) $("#term-popover").hidden = true;
-  }, true);
+  $("#term-close")?.addEventListener("click", () => {
+    const popover = $("#term-popover");
+    if (popover) popover.hidden = true;
+  });
   document.addEventListener("keydown", event => {
     const trigger = event.target.closest("[data-help-term]");
     if (!trigger || !["Enter"," "].includes(event.key)) return;
