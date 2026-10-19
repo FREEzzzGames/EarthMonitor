@@ -408,3 +408,13 @@
 .anomaly-tabs button.is-active{border-color:#ddd;color:#fff;background:#262626}
 .anomaly-content{padding:10px;min-height:115px}.anomaly-state strong{display:block;font-size:12px;letter-spacing:.04em}.anomaly-state>span{display:block;margin-top:8px;font:20px "Space Mono",monospace;color:#fff}.anomaly-state p{color:#aaa;margin:8px 0;font-size:11px}.anomaly-state a,.anomaly-list a{color:#ddd;text-decoration:underline;font-size:10px}.anomaly-list{display:grid;gap:7px}.anomaly-list li{color:#ccc;font-size:11px;overflow-wrap:anywhere}.anomaly-list ul{padding-left:17px;margin:8px 0}.anomaly-meta{color:#888;font-size:10px;margin-top:8px}.anomaly-good{color:#b8e8bf!important}.anomaly-warn{color:#ffb0a8!important}.anomaly-neutral{color:#ddd!important}.panel-anomalies .footer{display:flex;align-items:center;justify-content:space-between;gap:8px}
 @media(max-width:850px){.panel-anomalies{grid-column:1/3;grid-row:auto}.panel-cameras{grid-column:1/3;grid-row:auto}.critical-ticker{align-items:flex-start;flex-wrap:wrap}.critical-ticker #critical-ticker-text{flex-basis:65%}}
+
+/* Expanded telemetry tabs: strict square geometry, on-demand module data */
+.anomaly-tabs{gap:3px;max-height:94px;overflow-y:auto;align-content:flex-start}
+.anomaly-tabs button{border-radius:0;background:#000;border:1px solid #262626;color:#a9a9a9;font-family:monospace;white-space:nowrap}
+.anomaly-tabs button.is-active{background:#171717;border-color:#777;color:#fff}
+.anomaly-tabs [data-anomaly-alert]{color:#ff5b5b;font-weight:800}
+.anomaly-state,.anomaly-list,.anomaly-content{border-radius:0!important}
+.anomaly-state span{font-family:monospace}
+.anomaly-state .anomaly-warn{color:#ff5656!important}
+.anomaly-state .anomaly-good{color:#ddd!important}
