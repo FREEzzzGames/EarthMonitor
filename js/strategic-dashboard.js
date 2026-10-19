@@ -60,7 +60,7 @@ function openModule(id){
  if(id==="global-streams"){openDedicated("global-stream-dialog",'[data-global-select="lightning"]');return}
  if(id==="niche-telemetry"){openDedicated("niche-telemetry-dialog",'[data-niche-select="aircraft"]');return}
  if(id==="deep-telemetry"){openDedicated("deep-telemetry-dialog",'[data-deep-select="dsn"]');return}
- if(id==="transport"){const p=$("strategic-dialog-content");p.replaceChildren();const note=document.createElement("p");note.className="strategic-source-note";note.textContent=transportDemo?"DEMO MODE ENABLED · no live transport feed is configured. This panel intentionally does not generate fake vehicle positions.":"LIVE GTFS-RT FEED NOT CONFIGURED · no real-time vehicles or departures can be shown.";p.append(note);return}
+ if(id==="transport"){const p=$("strategic-dialog-content");p.replaceChildren();const note=document.createElement("p");note.className="strategic-source-note";note.textContent="Loading public transport departures for Pforzheim…";p.append(note);loadTransport(p);return}
  const panelId=id==="airquality"?"earthdata":id;
  const panel=document.querySelector('#source-library [data-panel="'+panelId+'"]');
  if(!panel){const p=document.createElement("p");p.className="strategic-source-note";p.textContent="MODULE UNAVAILABLE · no matching panel is registered in this build."; $("strategic-dialog-content").replaceChildren(p);return}
