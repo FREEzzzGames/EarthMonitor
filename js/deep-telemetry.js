@@ -2,7 +2,7 @@
 const $=id=>document.getElementById(id), PREFIX="earthmonitor-deep-v1:", MAX_AGE=30*60*1000;
 const FEEDS={
  dsn:{title:"DEEP SPACE NETWORK",url:"https://eyes.nasa.gov/dsn/dsn.html",description:"NASA DSN Now is the live public antenna/spacecraft activity visualization. The NASA API endpoint is used only if the deployment provides a valid proxy; this panel does not infer Voyager/Mars link status from a static page."},
- orbit:{title:"ORBIT / OBJECT DECAY",url:"https://www.space-track.org/",description:"Space-Track requires a registered account and authenticated API access. Orbital decay/re-entry estimates are not inferred from object names; configure a server-side Space-Track proxy."},
+ orbit:{title:"ORBITAL OBJECT CATALOG",url:"https://celestrak.org/NORAD/elements/",description:"Live public GP orbital elements from CelesTrak for the active satellite catalog. These elements are not a re-entry prediction; precise decay estimates require additional orbital analysis."},
  argo:{title:"ARGO OCEAN FLOATS",url:"https://dataselection.euro-argo.eu/",description:"Argo is a profile/observation archive with delayed data, not a universal second-by-second live stream. This client uses the public ERDDAP griddap interface when available."},
  dart:{title:"DART TSUNAMI BUOYS",url:"https://www.ndbc.noaa.gov/dart.shtml",description:"NOAA NDBC DART buoy observations and event status. Buoy data may be delayed and a lack of an event is not a tsunami safety statement."},
  cables:{title:"SUBSEA CABLE INFRASTRUCTURE",url:"https://www.submarinecablemap.com/",description:"Subsea cable maps are public reference maps, not a universal live cable health API. No cable outage status is fabricated; a licensed or operator feed is required for live status."},
@@ -32,8 +32,12 @@ function render(k,data,cached=false,savedAt=Date.now()){
   const rows=Array.isArray(data)?data:(Array.isArray(data?.data)?data.data:[]);
   if(host)host.append(metric("OBSERVATIONS",rows.length));
   listRecords(list,rows,(box,x)=>{const p=document.createElement("p");p.textContent=(Array.isArray(x)?x:Object.entries(x).map(([a,b])=>a+": "+b)).slice(0,10).join(" · ");box.append(p)});
+ }else if(k==="orbit"){
+  const objects=Array.isArray(data)?data:(Array.isArray(data?.data)?data.data:[]);
+  if(host)host.append(metric("CATALOG OBJECTS",objects.length),metric("SOURCE","CelesTrak public GP JSON"));
+  listRecords(list,objects,(box,x)=>{const h=document.createElement("strong");h.textContent=x.OBJECT_NAME||x.object_name||x.name||"Unnamed orbital object";box.append(h);const p=document.createElement("p");p.textContent=["NORAD "+(x.NORAD_CAT_ID||x.norad_cat_id||"—"),"Epoch "+(x.EPOCH||x.epoch||"—"),"Inclination "+(x.INCLINATION??x.inclination??"—"),"Mean motion "+(x.MEAN_MOTION??x.mean_motion??"—")].join(" · ");box.append(p)});
  }else{
-  if(host){host.append(metric("PROVIDER",FEEDS[k].url));host.append(metric("LIVE DATA","Requires authorized provider endpoint"));host.append(metric("STATE","No synthetic status values"))}
+  if(host){host.append(metric("PROVIDER",FEEDS[k].url));host.append(metric("LIVE API","No public unauthenticated endpoint configured"));host.append(metric("DATA STATE","Source link available; live API integration requires provider access"))}
  }
  const age=Date.now()-savedAt;
  text("deep-detail-updated",(cached?(age>MAX_AGE?"STALE CACHE":"CACHED DATA"):"UPDATED")+" · "+time(savedAt));
@@ -45,6 +49,7 @@ async function load(k){
  state.controller?.abort();const ctrl=new AbortController();state.controller=ctrl;const timeout=setTimeout(()=>ctrl.abort(),12000);setup(k);status("CONNECTING TO PUBLIC ENDPOINT…","loading");
  try{
   const config=window.EARTHMONITOR_DEEP_CONFIG?.[k];let url=config?.url,data;
+  if(!url&&k==="orbit")url="https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=JSON";
   if(!url&&k==="argo")url="https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.json?latitude%2Clongitude%2Ctime%2Cpres%2Ctemp%2Cpsal&time%3E=now-30days&orderBy(%22time%22)&limit(40)";
   if(!url&&k==="dart")url="https://www.ndbc.noaa.gov/data/realtime2/21413.dart";
   if(!url)throw new Error("Live API endpoint requires a provider-specific server proxy");
@@ -56,7 +61,7 @@ async function load(k){
  }catch(e){
   const cached=cacheGet(k);
   if(cached)render(k,cached.data,true,cached.savedAt);
-  else{status("[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE","warning");text("deep-summary-status","[!] FEED TEMPORARILY UNAVAILABLE - USING CACHE");text("deep-detail-updated","NO CACHE AVAILABLE · "+(e?.message||"source unavailable"));const host=$("deep-detail-data");host?.replaceChildren();host?.append(metric("DATA STATE","Unavailable"),metric("REASON",(e?.message||"feed unavailable").slice(0,150)))}
+  else{status("LIVE SOURCE UNAVAILABLE","warning");text("deep-summary-status","LIVE SOURCE UNAVAILABLE");text("deep-detail-updated","NO CACHED RESPONSE · "+(e?.message||"source unavailable"));const host=$("deep-detail-data");host?.replaceChildren();host?.append(metric("DATA STATE","Unavailable"),metric("SOURCE",FEEDS[k].url),metric("REASON",(e?.message||"feed unavailable").slice(0,150)))}
  }finally{clearTimeout(timeout)}
 }
 function open(){const d=$("deep-telemetry-dialog");if(d&&!d.open)d.showModal();load(state.active)}
