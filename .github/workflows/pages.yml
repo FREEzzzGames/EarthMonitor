@@ -25,11 +25,13 @@ jobs:
           import { readFileSync } from 'node:fs';
           import vm from 'node:vm';
           const html = readFileSync('index.html', 'utf8');
-          const start = html.indexOf('<script>');
-          const end = html.indexOf('</script>', start);
-          if (start < 0 || end < 0) throw new Error('Inline dashboard script not found');
-          new vm.Script(html.slice(start + 8, end), { filename: 'earth-monitor.js' });
-          console.log('Inline dashboard JavaScript parses successfully.');
+          const script = readFileSync('app.js', 'utf8');
+          const css = readFileSync('styles.css', 'utf8');
+          if (!html.includes('src="./app.js"')) throw new Error('External dashboard script link missing');
+          if (!html.includes('href="./styles.css"')) throw new Error('External dashboard stylesheet link missing');
+          if (!css.includes('.details-dialog')) throw new Error('Drill-down modal styles missing');
+          new vm.Script(script, { filename: 'app.js' });
+          console.log('External dashboard JavaScript and stylesheet validated.');
           NODE
   deploy:
     needs: validate
