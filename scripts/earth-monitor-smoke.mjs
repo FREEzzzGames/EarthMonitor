@@ -34,6 +34,8 @@ assert.ok(script.includes("setInterval(loadRegionalCameraFeeds,60000)") && scrip
 assert.ok(script.includes("function setLanguage(code") && script.includes("camTitle") && script.includes("rotateCams"), "localization missing");
 assert.ok(html.includes('id="complexity-toggle"') && html.includes('id="expert-catalog"') && html.includes('data-panel="spaceweather"'), "simple/expert navigation or space weather card missing");
 assert.ok(script.includes("function setComplexity") && script.includes("function syncMainSpaceWeather") && script.includes("simple-mode"), "complexity mode logic missing");
+assert.ok(!script.includes("setInterval(syncMainSpaceWeather,5000)") && !script.includes("priorPanelDetails") && !script.includes("anomalyPriorOpen"), "redundant polling or monkey-patched panel handlers remain");
+assert.ok(script.includes('new CustomEvent("earthmonitor:panel-open"') && script.includes('addEventListener("earthmonitor:panel-open"'), "panel details must use explicit open events");
 assert.ok(html.includes('src="./js/touch-tactical.js"'), "tactical UI module is not loaded");
 const tactical = await readFile(new URL("../js/touch-tactical.js", import.meta.url), "utf8");
 assert.ok(tactical.includes("function updateKp") && tactical.includes("function updateEarthquakeAlert") && tactical.includes("function focusPanel"), "tactical alert API missing");
