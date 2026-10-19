@@ -40,7 +40,7 @@ assert.ok(tactical.includes("function updateKp") && tactical.includes("function 
 assert.ok(tactical.includes("telemetry-toast") && tactical.includes("touch-pressed") && tactical.includes("data-help-term"), "touch controls or telemetry toast missing");
 assert.ok(css.includes("TOUCH-FIRST / TACTICAL UI") && css.includes("min-height:48px") && css.includes('data-status="critical"'), "touch targets or critical panel styles missing");
 const buildScript = await readFile(new URL("../scripts/build-web.mjs", import.meta.url), "utf8");
-assert.ok(buildScript.includes("www/js/") && buildScript.includes("touch-tactical.js"), "Android web bundle omits tactical module");
+assert.ok(buildScript.includes("www/js/") && buildScript.includes("new URL('../js/'"), "Android web bundle omits tactical module");
 const pagesWorkflow = await readFile(new URL("../.github/workflows/pages.yml", import.meta.url), "utf8");
 assert.ok(pagesWorkflow.includes("cp -R js _site/js"), "GitHub Pages staging omits JavaScript modules");
 const androidWorkflow = await readFile(new URL("../.github/workflows/android-apk.yml", import.meta.url), "utf8");
