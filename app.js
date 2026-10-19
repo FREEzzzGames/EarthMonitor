@@ -414,3 +414,12 @@ document.querySelectorAll(".panel-head h2").forEach(heading=>{
  document.querySelectorAll("[data-help-term]").forEach(el=>el.addEventListener("click",()=>{const key=el.dataset.helpTerm;const text=simpleGlossary[key];if(!text)return;const title=el.dataset.helpTerm.toUpperCase();if($("term-title"))$("term-title").textContent=title;if($("term-copy"))$("term-copy").textContent=text;const pop=$("term-popover");if(pop)pop.hidden=false;}));
 
 })();
+
+document.addEventListener("DOMContentLoaded",()=>{
+ const toggle=document.getElementById("complexity-toggle");if(!toggle)return;
+ const sync=()=>{const on=document.body.classList.contains("expert-mode");toggle.setAttribute("aria-pressed",String(on));toggle.textContent=on?"[ EXPERT ]":"[ SIMPLE ]";document.querySelectorAll("[data-expert-footer]").forEach(el=>{el.hidden=!on})};
+ toggle.addEventListener("click",()=>{document.body.classList.toggle("expert-mode");sync()});sync();
+ const refresh=()=>{const now=Date.now();document.querySelectorAll("[data-expert-utc]").forEach(el=>el.textContent=new Date(now).toISOString());document.querySelectorAll("[data-expert-unix]").forEach(el=>el.textContent=String(Math.floor(now/1000)));document.querySelectorAll("[data-expert-coords]").forEach(el=>el.textContent="48.89, 8.70");document.querySelectorAll("[data-expert-stream]").forEach(el=>{const state=document.getElementById("net-status");el.textContent=state?state.innerText.trim():"STATUS UNKNOWN"})};
+ refresh();setInterval(refresh,1000);
+ document.querySelectorAll("[data-strategic-open]").forEach(button=>button.addEventListener("click",async()=>{const footer=button.closest("[data-strategic]")?.querySelector("[data-expert-footer]");if(!footer||!document.body.classList.contains("expert-mode"))return;const ping=footer.querySelector("[data-expert-ping]");if(!ping)return;const started=performance.now();try{const response=await fetch("https://cloudflare-dns.com/dns-query?name=cloudflare.com&type=A",{mode:"cors",cache:"no-store",headers:{Accept:"application/dns-json"},signal:AbortSignal.timeout(5000)});if(!response.ok)throw Error("Gateway unavailable");ping.textContent=Math.round(performance.now()-started)+" ms"}catch{ping.textContent="UNAVAILABLE"}}));
+});
